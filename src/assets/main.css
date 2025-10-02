@@ -52,7 +52,7 @@ layer(base);
   --color-brand-700: #2a31d8;
   --color-brand-800: #252dae;
   --color-brand-900: #262e89;
-  --color-brand-950: #161950;
+  --color-brand-950: #C8E284;
 
   --color-blue-light-25: #f5fbff;
   --color-blue-light-50: #f0f9ff;
@@ -757,4 +757,19 @@ span.flatpickr-weekday,
 
 .edit-button {
   @apply flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto;
+}
+  .zeppelin-nome{
+    color: #ffffff;
+    font-size: 60px;
+    position: absolute;
+    top:5%;
+    left: 5%;
+    margin: 10px;  
+    --font-outfit: Outfit, sans-serif;
+    text-shadow: 2px 2px 4px rgba(158, 158, 158, 0.7);
+  }
+.imagem-inicio{
+  width: 90vh ;
+  padding-left: 10%;
+  
 }
