@@ -1,0 +1,67 @@
+[
+  {
+    "id": "IS.01",
+    "code": "IS.01",
+    "text": "Feedbacks (data and opinions) from customers/consumers are captured and stored in a customer/consumer data repository."
+  },
+  {
+    "id": "IS.02",
+    "code": "IS.02",
+    "text": "Feedbacks (data and opinions) from customers/consumers are continuously and automatically captured."
+  },
+  {
+    "id": "IS.03",
+    "code": "IS.03",
+    "text": "Feedbacks (data and opinions) from customers/consumers are used to improve products (enhance existing features and identify new ones)."
+  },
+  {
+    "id": "IS.04",
+    "code": "IS.04",
+    "text": "The organization identifies new business opportunities based on automatically captured customer/consumer feedbacks."
+  },
+  {
+    "id": "IS.05",
+    "code": "IS.05",
+    "text": "Feedbacks (data and opinions) from customers/consumers are used for experimentation and innovation."
+  },
+  {
+    "id": "IS.06",
+    "code": "IS.06",
+    "text": "Experiments (e.g., A/B tests) are conducted with customers/consumers to improve products."
+  },
+  {
+    "id": "IS.07",
+    "code": "IS.07",
+    "text": "Technologies (e.g., cloud technologies) are adopted to enhance experimentation."
+  },
+  {
+    "id": "IS.08",
+    "code": "IS.08",
+    "text": "The organization continually experiments new technologies and methodologies."
+  },
+  {
+    "id": "IS.09",
+    "code": "IS.09",
+    "text": "The organization has a clear information flow between the strategic level and the development area, allowing customer/consumer data to be used in an aligned way in making technical and business decisions."
+  },
+  {
+    "id": "IS.10",
+    "code": "IS.10",
+    "text": "Data from the customer/consumer data repository is used in decision making by the software development area."
+  },
+  {
+    "id": "IS.11",
+    "code": "IS.11",
+    "text": "Data from the customer/consumer data repository is used in decision making by the business area."
+  },
+  {
+    "id": "IS.12",
+    "code": "IS.12",
+    "text": "Alignment between product development and the organization's business is maintained through continuous checks, in short cycles and based on customer/consumer data."
+  },
+  {
+    "id": "IS.13",
+    "code": "IS.13",
+    "text": "Knowledge management practices are adopted based on data from the customer/consumer data repository."
+  }
+]

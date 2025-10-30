@@ -313,27 +313,76 @@
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { api } from '@/services/api'
+import { RouterLink, useRouter } from 'vue-router'
 
+const router = useRouter()
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const agreeToTerms = ref(false)
+const loading = ref(false)
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleSubmit = () => {
+// funções de validação
+const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}$/
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&()*+\-./<=>?@\[\\\]_{}])[A-Za-z\d!#$%&()*+\-./<=>?@\[\\\]_{}]{8,}$/
+
+
+const handleSubmit = async () => {
   // Implement form submission logic here
-  console.log('Form submitted', {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    password: password.value,
-    agreeToTerms: agreeToTerms.value,
-  })
+
+  if (!agreeToTerms.value) {
+    alert('Você precisa aceitar os termos de condição e privacidade')  
+    return  
+  }
+  if (!firstName.value || !lastName.value) {
+    alert('Preencha nome e sobrenome')
+    return
+  }
+  if (!emailRegex.test(email.value)) {
+    alert('Email inválido')
+    return
+  }
+  if (password.value.length < 8) {
+    alert('Senha fraca! Use pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e caractere especial.')
+    return
+  }
+    if (!strongPasswordRegex.test(password.value)) {
+    alert('Senha fraca! Use pelo menos 8 caracteres, incluindo maiúscula, minúscula, número e caractere especial.')
+    return
+  }
+
+  try {
+    loading.value = true
+
+    // rota que você usava com fetch
+    const { data } = await api.post('/auth/register/', {
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email: email.value,
+      password: password.value,
+      agree_to_terms: agreeToTerms.value,
+    })
+
+    alert('Cadastro realizado com sucesso!')
+    router.push('/signin')
+  } catch (err: any) {
+    const d = err?.response?.data
+    if (d?.email?.[0]) {
+      alert(d.email[0])
+    } else if (typeof d === 'string') {
+      alert(d)
+    } else {
+      alert('Erro no cadastro')
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>

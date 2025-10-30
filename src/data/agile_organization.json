@@ -1,0 +1,132 @@
+[
+  {
+    "id": "AO.01",
+    "code": "AO.01",
+    "text": "Roles involved in the agile development process (e.g., Scrum Master, Product Owner, Developer, Tester) exist in the organization."
+  },
+  {
+    "id": "AO.02",
+    "code": "AO.02",
+    "text": "Project teams include a Product Owner, who is responsible for representing the Customer and actively participates in the projects."
+  },
+  {
+    "id": "AO.03",
+    "code": "AO.03",
+    "text": "The scope of the project is defined gradually, using the Product Backlog (or equivalent artifact)."
+  },
+  {
+    "id": "AO.04",
+    "code": "AO.04",
+    "text": "Effort estimation is performed by (or together with) the development team considering short activities to implement a set of selected requirements (and not the project as a whole)."
+  },
+  {
+    "id": "AO.05",
+    "code": "AO.05",
+    "text": "Cost estimation is established based on the effort estimation and considers the effort needed to implement a selected set of requirements (and not the project as a whole)."
+  },
+  {
+    "id": "AO.06",
+    "code": "AO.06",
+    "text": "To deliver value to the customer, requirements are defined and prioritized according to customer needs, are periodically reviewed, and changes are absorbed into iterations of the development process."
+  },
+  {
+    "id": "AO.07",
+    "code": "AO.07",
+    "text": "The development process is performed iteratively, in short cycles (e.g., 2 weeks), in which selected project requirements recorded in a Sprint Backlog (or equivalent artifact) are developed."
+  },
+  {
+    "id": "AO.08",
+    "code": "AO.08",
+    "text": "The customer receives new versions of the product frequently (after one or more short development cycles), including new functionality defined according to customer needs."
+  },
+  {
+    "id": "AO.09",
+    "code": "AO.09",
+    "text": "The organization has clear acceptance criteria for software requirements and they are used to evaluate the artifacts (e.g., functionality) produced and define if they are concluded."
+  },
+  {
+    "id": "AO.10",
+    "code": "AO.10",
+    "text": "The organization has at least one person (e.g. Software Architect, Tech Lead or Quality Analyst) responsible for the quality of the produced artifacts, including the final product."
+  },
+  {
+    "id": "AO.11",
+    "code": "AO.11",
+    "text": "The team frequently (e.g., daily, every two or three days) reflects on the development progress within the scope of what has been defined for the current time-box and adjusts tasks if necessary (e.g., stand-up meetings)"
+  },
+  {
+    "id": "AO.12",
+    "code": "AO.12",
+    "text": "The team frequently meets to discuss improvements to the product, process, or tools during the projects (e.g., in retrospective meetings)."
+  },
+  {
+    "id": "AO.13",
+    "code": "AO.13",
+    "text": "The team frequently meets to discuss improvements in team members' skills during the projects (e.g., in retrospective meetings)."
+  },
+  {
+    "id": "AO.14",
+    "code": "AO.14",
+    "text": "Teams are small (usually between 4 to 6 developers), self-organized and multidisciplinary."
+  },
+  {
+    "id": "AO.15",
+    "code": "AO.15",
+    "text": "The project team has autonomy to make technical decisions on the project."
+  },
+  {
+    "id": "AO.16",
+    "code": "AO.16",
+    "text": "The project stakeholders (including the client) are encouraged to think about their role and responsibilities in the project."
+  },
+  {
+    "id": "AO.17",
+    "code": "AO.17",
+    "text": "Good programming practices are adopted (e.g., collective coding, standardized coding, pair programming, code review, etc.)."
+  },
+  {
+    "id": "AO.18",
+    "code": "AO.18",
+    "text": "Good testing practices are adopted (automated testing, test-driven development, etc.)"
+  },
+  {
+    "id": "AO.19",
+    "code": "AO.19",
+    "text": "Data is collected for metrics to evaluate quality aspects of the produced artifacts and the product (e.g., cyclomatic complexity, number of code smells)."
+  },
+  {
+    "id": "AO.20",
+    "code": "AO.20",
+    "text": "Data is collected for metrics to evaluate performance aspects of the agile development process (e.g., work in progress, velocity)."
+  },
+  {
+    "id": "AO.21",
+    "code": "AO.21",
+    "text": "Data produced (task performer, task completion date, story points, etc.) throughout the development of the projects is stored in one (or more) data repository."
+  },
+  {
+    "id": "AO.22",
+    "code": "AO.22",
+    "text": "Decisions in projects are made based on data from one (or more) data repository."
+  },
+  {
+    "id": "AO.23",
+    "code": "AO.23",
+    "text": "The agile software development process is continuously evaluated and improved."
+  },
+  {
+    "id": "AO.24",
+    "code": "AO.24",
+    "text": "Data stored in the repository is used to improve the product and the agile software development process."
+  },
+  {
+    "id": "AO.25",
+    "code": "AO.25",
+    "text": "The organization has practices to share relevant knowledge to (agile) software development (e.g., internal lectures, tutorials, knowledge repositories, guild implementations)."
+  },
+  {
+    "id": "AO.26",
+    "code": "AO.26",
+    "text": "The (agile) development process is aligned to the organization's business and this is perceived by the value delivery to the customer and her/his satisfaction with the delivered product."
+  }
+]

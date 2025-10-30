@@ -263,6 +263,10 @@ const menuGroups = [
         icon: ListIcon,
         subItems: [
           { name: "Form Elements", path: "/form-elements", pro: false },
+          { name: "Agile Organization", path: "/agile-organization", pro: false },
+          { name: "Continuous Integration", path: "/continuous-integration", pro: false },
+          { name: "Continuous Deployment", path: "/continuous-deployment", pro: false },
+          { name: "R&D as Innovation System", path: "/innovation-system", pro: false },
         ],
       },
       {

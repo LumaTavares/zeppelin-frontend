@@ -1,0 +1,92 @@
+[
+  {
+    "id": "CI.01",
+    "code": "CI.01",
+    "text": "The software architecture is modular in order to allow automated testing."
+  },
+  {
+    "id": "CI.02",
+    "code": "CI.02",
+    "text": "The software architecture is modular in order to allow automated builds."
+  },
+  {
+    "id": "CI.03",
+    "code": "CI.03",
+    "text": "Tests run automatically, periodically, in a test environment."
+  },
+  {
+    "id": "CI.04",
+    "code": "CI.04",
+    "text": "When code is integrated, tests run automatically in a test environment."
+  },
+  {
+    "id": "CI.05",
+    "code": "CI.05",
+    "text": "Tests run automatically, periodically, in a test environment, to verify code coverage."
+  },
+  {
+    "id": "CI.06",
+    "code": "CI.06",
+    "text": "Builds occur frequently and automatically."
+  },
+  {
+    "id": "CI.07",
+    "code": "CI.07",
+    "text": "Builds are canceled if one or more tests fail."
+  },
+  {
+    "id": "CI.08",
+    "code": "CI.08",
+    "text": "Requirements validation is performed by the (multidisciplinary) development team."
+  },
+  {
+    "id": "CI.09",
+    "code": "CI.09",
+    "text": "Requirements verification is performed by the (multidisciplinary) development team."
+  },
+  {
+    "id": "CI.10",
+    "code": "CI.10",
+    "text": "Code is integrated constantly and automatically."
+  },
+  {
+    "id": "CI.11",
+    "code": "CI.11",
+    "text": "Version control of software artifacts (e.g., code, test, scripts, etc.) is performed in a repository."
+  },
+  {
+    "id": "CI.12",
+    "code": "CI.12",
+    "text": "Check-in good practices are applied in the development trunk (e.g., use of tools such as GitFlow and Toogle Feature)."
+  },
+  {
+    "id": "CI.13",
+    "code": "CI.13",
+    "text": "The organization adopts practices that allow external organizations to act in the development of the project."
+  },
+  {
+    "id": "CI.14",
+    "code": "CI.14",
+    "text": "The organization uses metrics that allow the evaluation and data collection for the continuous integration process."
+  },
+  {
+    "id": "CI.15",
+    "code": "CI.15",
+    "text": "Data produced in continuous integration environments is stored in one (or more) data repository."
+  },
+  {
+    "id": "CI.16",
+    "code": "CI.16",
+    "text": "The continuous integration process is evaluated and improved continuously."
+  },
+  {
+    "id": "CI.17",
+    "code": "CI.17",
+    "text": "Data stored in the data repository is used to improve the product and the continuous integration process."
+  },
+  {
+    "id": "CI.18",
+    "code": "CI.18",
+    "text": "The organization adopts practices for sharing knowledge related to continuous integration (e.g., internal lectures, tutorials, knowledge repositories, guild implementations)."
+  }
+]

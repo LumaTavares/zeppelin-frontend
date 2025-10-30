@@ -5,10 +5,10 @@
       @click.prevent="toggleDropdown"
     >
       <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
-        <img src="/images/user/owner.jpg" alt="User" />
+        <img :src="userAvatar" alt="User" />
       </span>
 
-      <span class="block mr-1 font-medium text-theme-sm">Musharof </span>
+      <span class="block mr-1 font-medium text-theme-sm">{{ userName }}</span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
     </button>
@@ -20,36 +20,33 @@
     >
       <div>
         <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          Musharof Chowdhury
+          {{ userName }}
         </span>
         <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-          randomuser@pimjo.com
+          {{ userEmail }}
         </span>
       </div>
 
+      <p v-if="auth.user === null">Usuário não logado</p>
+      <p v-else>Olá, {{ auth.user.first_name }}</p>
       <ul class="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
         <li v-for="item in menuItems" :key="item.href">
           <router-link
             :to="item.href"
             class="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
           >
-            <!-- SVG icon would go here -->
-            <component
-              :is="item.icon"
-              class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
-            />
+            <component :is="item.icon" class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
             {{ item.text }}
           </router-link>
         </li>
       </ul>
+
       <router-link
         to="/signin"
         @click="signOut"
         class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
       >
-        <LogoutIcon
-          class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
-        />
+        <LogoutIcon class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" />
         Sign out
       </router-link>
     </div>
@@ -57,20 +54,39 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
-import { RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
+const auth = useAuthStore()
 
+// ✅ Carrega dados do usuário ao montar o componente
+onMounted(async () => {
+  if (auth.token && !auth.user) {
+    try {
+      await auth.fetchUser() // Vamos criar essa função
+    } catch (error) {
+      console.error('Erro ao carregar usuário:', error)
+    }
+  }
+})
+
+// Computed properties para evitar optional chaining no template
+const userName = computed(() => auth.user?.first_name || 'Usuário')
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
+const userAvatar = computed(() => auth.user?.avatar || '/images/user/owner.jpg')
+
+// Menu do dropdown
 const menuItems = [
   { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
   { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
   { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
 ]
 
+// Funções
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 }
@@ -80,13 +96,13 @@ const closeDropdown = () => {
 }
 
 const signOut = () => {
-  // Implement sign out logic here
-  console.log('Signing out...')
+  auth.logout()
   closeDropdown()
 }
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+// Fecha dropdown clicando fora
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !(dropdownRef.value as HTMLElement).contains(event.target as Node)) {
     closeDropdown()
   }
 }

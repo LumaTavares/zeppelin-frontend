@@ -1,0 +1,97 @@
+[
+  {
+    "id": "CD.01",
+    "code": "CD.01",
+    "text": "The main customers/consumers are identified and participate in the development process, influencing the functionalities that will be produced and delivered."
+  },
+  {
+    "id": "CD.02",
+    "code": "CD.02",
+    "text": "sales strategies are constantly evaluated and revised (when necessary) based on information from lead customers."
+  },
+  {
+    "id": "CD.03",
+    "code": "CD.03",
+    "text": "There is a clear flow of information between Operation and Business, allowing new customer/consumer needs and business opportunities to be identified from the delivery of new functionality."
+  },
+  {
+    "id": "CD.04",
+    "code": "CD.04",
+    "text": "The software architecture allows functionalities to be deployed independently."
+  },
+  {
+    "id": "CD.05",
+    "code": "CD.05",
+    "text": "The testing process is continuously improved."
+  },
+  {
+    "id": "CD.06",
+    "code": "CD.06",
+    "text": "The continuous deployment process is automated."
+  },
+  {
+    "id": "CD.07",
+    "code": "CD.07",
+    "text": "There is a continuous deployment process by releases."
+  },
+  {
+    "id": "CD.08",
+    "code": "CD.08",
+    "text": "Customers/consumers receive new functionality frequently (even in cycles shorter than the time-box usually established in the development process)."
+  },
+  {
+    "id": "CD.09",
+    "code": "CD.09",
+    "text": "Customers can test the product as soon as it is deployed."
+  },
+  {
+    "id": "CD.10",
+    "code": "CD.10",
+    "text": "The organization's business model is constantly evaluated and revised (when necessary) based on customer/consumer inputs."
+  },
+  {
+    "id": "CD.11",
+    "code": "CD.11",
+    "text": "Marketing strategies are constantly evaluated and revised (when necessary) based on information from lead customers."
+  },
+  {
+    "id": "CD.12",
+    "code": "CD.12",
+    "text": "Sales strategies are constantly evaluated and revised (when necessary) based on information from lead customers."
+  },
+  {
+    "id": "CD.13",
+    "code": "CD.13",
+    "text": "Alignment between product development and the organization's business is maintained through continuous checks, in short cycles."
+  },
+  {
+    "id": "CD.14",
+    "code": "CD.14",
+    "text": "Alignment between product development and the organization's business is maintained through continuous checks, in short cycles and based on data."
+  },
+  {
+    "id": "CD.15",
+    "code": "CD.15",
+    "text": "The organization has metrics to evaluate the continuous deployment process and data is collected for them."
+  },
+  {
+    "id": "CD.16",
+    "code": "CD.16",
+    "text": "Data produced in continuous deployment environments is stored in one (or more) data repository."
+  },
+  {
+    "id": "CD.17",
+    "code": "CD.17",
+    "text": "The continuous deployment process is continuously evaluated and improved."
+  },
+  {
+    "id": "CD.18",
+    "code": "CD.18",
+    "text": "Data stored in the data repository is used to improve the product and the continuous deployment process."
+  },
+  {
+    "id": "CD.19",
+    "code": "CD.19",
+    "text": "The organization has  practices to share knowledge related to continuous deployment (e.g., internal lectures, tutorials, knowledge repositories, guild implementation)."
+  }
+]

@@ -39,6 +39,38 @@ const router = createRouter({
       },
     },
     {
+      path: '/continuous-integration',
+      name: 'Continuous Integration',
+      component: () => import('../views/Forms/ContinuousIntegration.vue'),
+      meta: {
+        title: 'Continuous Integration',
+      },
+    },
+    {
+      path: '/continuous-deployment',
+      name: 'Continuous Deployment',
+      component: () => import('../views/Forms/ContinuousDeployment.vue'),
+      meta: {
+        title: 'Continuous Deployment',
+      },
+    },
+        {
+      path: '/agile-organization',
+      name: 'Agile Organization',
+      component: () => import('../views/Forms/AgileOrganization.vue'),
+      meta: {
+        title: 'Agile Organization',
+      },
+    },
+    {
+      path: '/innovation-system',
+      name: 'R&D as Innovation System',
+      component: () => import('../views/Forms/InnovationSystem.vue'),
+      meta: {
+        title: 'R&D as Innovation System',
+      },
+    },
+    {
       path: '/basic-tables',
       name: 'Basic Tables',
       component: () => import('../views/Tables/BasicTables.vue'),
@@ -138,6 +170,22 @@ const router = createRouter({
       component: () => import('../views/Auth/Signup.vue'),
       meta: {
         title: 'Signup',
+      },
+    },
+    {
+      path: '/password-reset',
+      name: 'PasswordReset',
+      component: () => import('../views/Auth/PasswordReset.vue'),
+      meta: {
+        title: 'PasswordReset',
+      },
+    },
+    {
+      path: '/reset-password',
+      name: 'ResetPassword',
+      component: () => import('../views/Auth/ResetPassword.vue'),
+      meta: {
+        title: 'ResetPassword',
       },
     },
   ],

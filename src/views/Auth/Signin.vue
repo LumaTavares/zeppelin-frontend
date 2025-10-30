@@ -192,7 +192,7 @@
                             <div
                               :class="
                                 keepLoggedIn
-                                  ? 'border-brand-500 bg-brand-500'
+                                  ? 'border-brand-950 bg-brand-950'
                                   : 'bg-transparent border-gray-300 dark:border-gray-700'
                               "
                               class="mr-3 flex h-5 w-5 items-center justify-center rounded-md border-[1.25px]"
@@ -220,8 +220,8 @@
                         </label>
                       </div>
                       <router-link
-                        to="/reset-password"
-                        class="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                        to="/password-reset"
+                        class="text-sm text-brand-950 hover:text-brand-950 dark:text-brand-400"
                         >Forgot password?</router-link
                       >
                     </div>
@@ -229,7 +229,7 @@
                     <div>
                       <button
                         type="submit"
-                        class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                        class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-950 shadow-theme-xs hover:bg-brand-950"
                       >
                         Sign In
                       </button>
@@ -243,7 +243,7 @@
                     Don't have an account?
                     <router-link
                       to="/signup"
-                      class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                      class="text-brand-950 hover:text-brand-950 dark:text-brand-400"
                       >Sign Up</router-link
                     >
                   </p>
@@ -253,18 +253,25 @@
           </div>
         </div>
         <div
-          class="relative items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid"
-        >
-          <div class="flex items-center justify-center z-1">
+          class="grid relative items-center w-200 h-220 bg-brand-950 dark:bg-white/5 rounded-2xl mt-10 mr-10"
+        ><!--foto da tela principal-->
+          <div class="">
             <common-grid-shape />
-            <div class="flex flex-col items-center max-w-xs">
-              <router-link to="/" class="block mb-4">
-                <img width="{231}" height="{48}" src="/images/logo/auth-logo.svg" alt="Logo" />
-              </router-link>
+            <div class="">
+              <h1 class="zeppelin-nome">
+                ZEPPELIN
+              </h1>
+              <div class="mt-25">
+              <img class="imagem-inicio" src="/images/site/1656.png"/>
+              </div>
               <p class="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                hehe  
               </p>
-            </div>
+              <div class="flex items-center gap-10 mt-20 ml-20">
+                <img src="/images/logo/leds_logo.png" class="h-17"/>
+                <img src="/images/logo/ifes_logo.png" class="h-23 "/>
+              </div>
+            </div> 
           </div>
         </div>
       </div>
@@ -274,23 +281,25 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import CommonGridShape from '@/components/common/CommonGridShape.vue'
-import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
+import { useAuthStore } from '@/stores/auth'
+
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
 const showPassword = ref(false)
-const keepLoggedIn = ref(false)
+const auth = useAuthStore()
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleSubmit = () => {
-  // Handle form submission
-  console.log('Form submitted', {
-    email: email.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
+const handleSubmit = async () => {
+  errorMessage.value = ''
+  try {
+    await auth.login(email.value, password.value)
+    window.location.href = '/' // redireciona após login
+  } catch (error: any) {
+    errorMessage.value = error.response?.data?.error_description || 'Login falhou'
+  }
 }
 </script>
