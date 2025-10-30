@@ -85,6 +85,8 @@ git clone https://github.com/TailAdmin/vue-tailwind-admin-dashboard.git
    yarn build
    ```
 
+4. Need change client_id and client_secret in stores\auth.ts with the app OAuth create in backend.
+
 ## Feature Comparison
 
 ### Free Version
@@ -153,6 +155,13 @@ Maintain a clean codebase with built-in linting and formatting.
 Handle your app's state with Pinia for clean, organized code.
 
 ## Update Logs
+
+### Version 2.0.1.1 - [October 30, 2025]
+
+- Create auth view from Signin, Reset and Signup.
+- Create services and stores.
+- Create template from questions.
+
 
 ### Version 2.0.1 - [February 27, 2025]
 
