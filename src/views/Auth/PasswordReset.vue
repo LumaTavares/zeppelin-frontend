@@ -72,15 +72,19 @@
                     />
                   </div>
 
-                  <!-- Button -->
-                  <div>
-                    <button
-                      type="submit"
-                      class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-                    >
-                      Send Reset Link
-                    </button>
-                  </div>
+                    <!-- Button -->
+                    <div>
+                      <div v-if="errorMessage" class="p-3 mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-lg">
+                          {{ errorMessage }}
+                      </div>
+                      
+                      <button
+                        type="submit"
+                        class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-950 shadow-theme-xs hover:bg-brand-900"
+                      >
+                        Sign In
+                      </button>
+                    </div>
                 </div>
               </form>
 
@@ -98,17 +102,25 @@
           </div>
         </div>
 
-        <div class="relative items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid">
-          <div class="flex items-center justify-center z-1">
-            <CommonGridShape />
-            <div class="flex flex-col items-center max-w-xs">
-              <router-link to="/" class="block mb-4">
-                <img width="231" height="48" src="/images/logo/auth-logo.svg" alt="Logo" />
-              </router-link>
-              <p class="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
-              </p>
-            </div>
+        <!--foto da tela principal-->
+        <div
+          class="grid relative items-center w-200 h-220 bg-brand-950 dark:bg-white/5 rounded-2xl mt-10 mr-10"
+        >
+          <div class="">
+            <common-grid-shape />
+            <div class="">
+              <h1 class="zeppelin-nome">
+                ZEPPELIN
+              </h1>
+              <div class="mt-25">
+              <img class="imagem-inicio" src="/images/site/1656.png"/>
+              </div>
+          
+              <div class="flex items-center gap-10 mt-20 ml-20">
+                <img src="/images/logo/leds_logo.png" class="h-17"/>
+                <img src="/images/logo/ifes_logo.png" class="h-23 "/>
+              </div>
+            </div> 
           </div>
         </div>
       </div>
@@ -119,16 +131,25 @@
 <script setup lang="ts">
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
-import { ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
-import axios from 'axios'
 
+import { ref, onMounted } from 'vue'
+import { api } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
+const auth = useAuthStore()
 const email = ref('')
 const confirmEmail = ref('') // campo para confirmação do email
 const loading = ref(false)
 const error = ref<string | null>(null)
-const router = useRouter()
+
   
+onMounted(() => {
+  if (auth.isAuthenticated) {
+    router.push('/')
+  }
+})
 
 // funções de validação
 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}$/
@@ -146,7 +167,9 @@ const handleSubmit = async () => {
   }
   loading.value = true
   try {
-    await axios.post('http://localhost:8000/auth/password-reset/', { email: email.value })
+    const { data } = await api.post('/auth/password-reset/', {
+      email: email.value,
+    })
     alert('Email de reset enviado se a conta existir')
     console.log("Email de reset enviado se a conta existir") // redireciona para página de confirmação
   } 

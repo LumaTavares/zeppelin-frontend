@@ -5,7 +5,7 @@
         <div class="flex flex-col flex-1 w-full lg:w-1/2">
           <div class="w-full max-w-md pt-10 mx-auto">
             <router-link
-              to="/signin"
+              to="/"
               class="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             >
               <svg
@@ -33,9 +33,7 @@
                 <h1 class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
                   New Password
                 </h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  Não esqueça: use uma senha forte (com letras, números e símbolos) e guarde-a em um lugar seguro!
-                </p>
+                
               </div>
 
               <form @submit.prevent="handleSubmit">
@@ -45,6 +43,9 @@
                     <label for="password" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                       Password<span class="text-error-500">*</span>
                     </label>
+                    <p class="text-xs text-gray-500 mt-1">
+                      The password must have at least 8 characters, including uppercase, lowercase, number, and special character.
+                    </p>
                     <input
                       v-model="password"
                       type="password"
@@ -74,9 +75,12 @@
 
                   <!-- Button -->
                   <div>
+                    <div v-if="errorMessage" class="p-3 mb-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-lg">
+                      {{ errorMessage }}
+                    </div>
                     <button
                       type="submit"
-                      class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                      class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-950 shadow-theme-xs hover:bg-brand-900"
                     >
                       Send Reset Link
                     </button>
@@ -88,8 +92,8 @@
                 <p class="text-sm font-normal text-gray-700 dark:text-gray-400">
                   Remember your password?
                   <router-link
-                    to="/signin"
-                    class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                    to="/"
+                    class="text-brand-950 hover:text-brand-900 dark:text-brand-400"
                     >Sign In</router-link
                   >
                 </p>
@@ -98,17 +102,25 @@
           </div>
         </div>
 
-        <div class="relative items-center hidden w-full h-full lg:w-1/2 bg-brand-950 dark:bg-white/5 lg:grid">
-          <div class="flex items-center justify-center z-1">
-            <CommonGridShape />
-            <div class="flex flex-col items-center max-w-xs">
-              <router-link to="/" class="block mb-4">
-                <img width="231" height="48" src="/images/logo/auth-logo.svg" alt="Logo" />
-              </router-link>
-              <p class="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
-              </p>
-            </div>
+        <!--foto da tela principal-->
+        <div
+          class="grid relative items-center w-200 h-220 bg-brand-950 dark:bg-white/5 rounded-2xl mt-10 mr-10"
+        >
+          <div class="">
+            <common-grid-shape />
+            <div class="">
+              <h1 class="zeppelin-nome">
+                ZEPPELIN
+              </h1>
+              <div class="mt-25">
+              <img class="imagem-inicio" src="/images/site/1656.png"/>
+              </div>
+          
+              <div class="flex items-center gap-10 mt-20 ml-20">
+                <img src="/images/logo/leds_logo.png" class="h-17"/>
+                <img src="/images/logo/ifes_logo.png" class="h-23 "/>
+              </div>
+            </div> 
           </div>
         </div>
       </div>
@@ -120,42 +132,49 @@
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 import { ref } from 'vue'
+import { api } from '@/services/api'
 import { useRoute, RouterLink, useRouter } from 'vue-router'
-import axios from 'axios'
 
 const password = ref('')
-const confirmPassword = ref('') // campo para confirmação do email
+const confirmPassword = ref('')
 const loading = ref(false)
-const error = ref<string | null>(null)
+const errorMessage = ref('')
 const router = useRouter()
 const route = useRoute()
 const uid = route.query.uid
 const token = route.query.token
 
+
 // funções de validação
 const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&()*+\-./<=>?@\[\\\]_{}])[A-Za-z\d!#$%&()*+\-./<=>?@\[\\\]_{}]{8,}$/
 
 const handleSubmit = async () => {
-  error.value = null
+
+  if(!password.value || !confirmPassword.value){
+    errorMessage.value= "Por favor, preencha todos os campos."
+    return
+  }
   if (password.value !== confirmPassword.value) {
-    error.value = 'As senhas não coincidem'
+    errorMessage.value= 'Os campos não coincidem.'
     return
   }
   if (!strongPasswordRegex.test(password.value)) {
-    error.value = 'Password inválido'
-    alert('Password inválido')
+    errorMessage.value=  'Senha fraca! Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, um número e um caractere especial.'
     return
   }
   loading.value = true
   try {
-    await axios.post('http://localhost:8000/auth/password-reset-confirm/', { uid ,token , new_password: password.value })
-    alert('Senha alterada com sucesso')
-    console.log("Senha alterada com sucesso")
+    await api.post('auth/password-reset-confirm/', { 
+      uid,
+      token, 
+      new_password: password.value 
+    })
+    alert('Senha alterada com sucesso!')
+    //console.log("Senha alterada com sucesso")
     router.push('/signin')
   } 
   catch (exc: any) {
-    console.log("ERROR : Erro ao alterar a senha")
-    console.log(error.value = exc.response?.data?.detail || 'Erro ao alterar a senha')
+    //console.log("ERROR: Failed to change the password")
     loading.value = false
   }
 }

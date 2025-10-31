@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -88,3 +90,28 @@ export const useAuthStore = defineStore('auth', {
     }
   }
 })
+
+// Funções para redirecionamento baseado na autenticação
+export function onMountedNotAuth() {
+
+  const auth = useAuthStore()
+  const router = useRouter()
+  
+  onMounted(() => {
+        if (!auth.isAuthenticated) {
+      router.push('/signin')
+    }
+  })  
+}
+
+export function onMountedAuth() {
+
+  const auth = useAuthStore()
+  const router = useRouter()
+  
+  onMounted(() => {
+        if (auth.isAuthenticated) {
+      router.push('/')
+    }
+  })  
+}
