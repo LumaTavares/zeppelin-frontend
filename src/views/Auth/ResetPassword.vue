@@ -144,7 +144,6 @@ const route = useRoute()
 const uid = route.query.uid
 const token = route.query.token
 
-
 // funções de validação
 const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!#$%&()*+\-./<=>?@\[\\\]_{}])[A-Za-z\d!#$%&()*+\-./<=>?@\[\\\]_{}]{8,}$/
 

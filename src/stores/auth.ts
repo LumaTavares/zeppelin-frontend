@@ -1,7 +1,4 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
-import { onMounted } from 'vue'
 import { env } from '@/stores/env'
 import { api } from '@/services/api'
 
@@ -88,7 +85,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
-      delete axios.defaults.headers.common['Authorization']
+      delete api.defaults.headers.common['Authorization']
     }
   }
 })

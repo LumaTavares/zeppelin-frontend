@@ -132,21 +132,14 @@
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { api } from '@/services/api'
-import { onAuth } from '@/composables/onAuth'
-import { useAuthStore } from '@/stores/auth'
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 
-const router = useRouter()
-const auth = useAuthStore()
 const email = ref('')
 const confirmEmail = ref('') // campo para confirmação do email
 const loading = ref(false)
 const error = ref<string | null>(null)
-
-  
-onAuth()
   
 // funções de validação
 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}$/

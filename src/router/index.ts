@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +15,7 @@ const router = createRouter({
         title: 'Dashboard',
       },
     },
-    {
+    /*{
       path: '/calendar',
       name: 'Calendar',
       component: () => import('../views/Others/Calendar.vue'),
@@ -23,51 +24,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/profile',
-      name: 'Profile',
-      component: () => import('../views/Others/UserProfile.vue'),
-      meta: {
-        title: 'Profile',
-      },
-    },
-    {
       path: '/form-elements',
       name: 'Form Elements',
       component: () => import('../views/Forms/FormElements.vue'),
       meta: {
         title: 'Form Elements',
-      },
-    },
-    {
-      path: '/continuous-integration',
-      name: 'Continuous Integration',
-      component: () => import('../views/Forms/ContinuousIntegration.vue'),
-      meta: {
-        title: 'Continuous Integration',
-      },
-    },
-    {
-      path: '/continuous-deployment',
-      name: 'Continuous Deployment',
-      component: () => import('../views/Forms/ContinuousDeployment.vue'),
-      meta: {
-        title: 'Continuous Deployment',
-      },
-    },
-        {
-      path: '/agile-organization',
-      name: 'Agile Organization',
-      component: () => import('../views/Forms/AgileOrganization.vue'),
-      meta: {
-        title: 'Agile Organization',
-      },
-    },
-    {
-      path: '/innovation-system',
-      name: 'R&D as Innovation System',
-      component: () => import('../views/Forms/InnovationSystem.vue'),
-      meta: {
-        title: 'R&D as Innovation System',
       },
     },
     {
@@ -138,6 +99,48 @@ const router = createRouter({
         title: 'Videos',
       },
     },
+    */
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('../views/Others/UserProfile.vue'),
+      meta: {
+        title: 'Profile',
+      },
+    },
+    {
+      path: '/continuous-integration',
+      name: 'Continuous Integration',
+      component: () => import('../views/Forms/ContinuousIntegration.vue'),
+      meta: {
+        title: 'Continuous Integration',
+      },
+    },
+    {
+      path: '/continuous-deployment',
+      name: 'Continuous Deployment',
+      component: () => import('../views/Forms/ContinuousDeployment.vue'),
+      meta: {
+        title: 'Continuous Deployment',
+      },
+    },
+        {
+      path: '/agile-organization',
+      name: 'Agile Organization',
+      component: () => import('../views/Forms/AgileOrganization.vue'),
+      meta: {
+        title: 'Agile Organization',
+      },
+    },
+    {
+      path: '/innovation-system',
+      name: 'R&D as Innovation System',
+      component: () => import('../views/Forms/InnovationSystem.vue'),
+      meta: {
+        title: 'R&D as Innovation System',
+      },
+    },
+    
     {
       path: '/blank',
       name: 'Blank',
@@ -194,6 +197,20 @@ const router = createRouter({
 export default router
 
 router.beforeEach((to, from, next) => {
+  
+  const auth = useAuthStore()
+  const publicPages = ['/signin', '/signup',]
+  const authRequired = !publicPages.includes(to.path)
+
+  if (authRequired && !auth.isAuthenticated) {
+    return next('/signin')
+  }
+
+  if (!authRequired && auth.isAuthenticated) {
+      return next(from.fullPath || '/')
+  }
+  
   document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
   next()
+  
 })

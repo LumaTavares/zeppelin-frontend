@@ -213,7 +213,6 @@ import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { onAuth } from '@/composables/onAuth'
 import { useAuthStore } from '@/stores/auth'
 
 const keepLoggedIn = ref(false)
@@ -223,8 +222,6 @@ const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const showPassword = ref(false)
-
-onAuth()
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
