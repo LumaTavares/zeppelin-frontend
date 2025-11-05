@@ -255,7 +255,7 @@ import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 import { ref } from 'vue'
 import { api } from '@/services/api'
-import { onMountedAuth } from '@/stores/auth'
+import { onAuth } from '@/composables/onAuth'
 import { RouterLink, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -267,7 +267,7 @@ const showPassword = ref(false)
 const agreeToTerms = ref(false)
 const loading = ref(false)
 
-onMountedAuth()
+onAuth()
 
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value

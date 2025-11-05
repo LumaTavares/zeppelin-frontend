@@ -134,6 +134,7 @@ import CommonGridShape from '@/components/common/CommonGridShape.vue'
 
 import { ref, onMounted } from 'vue'
 import { api } from '@/services/api'
+import { onAuth } from '@/composables/onAuth'
 import { useAuthStore } from '@/stores/auth'
 import { RouterLink, useRouter } from 'vue-router'
 
@@ -145,12 +146,8 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 
   
-onMounted(() => {
-  if (auth.isAuthenticated) {
-    router.push('/')
-  }
-})
-
+onAuth()
+  
 // funções de validação
 const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}$/
 

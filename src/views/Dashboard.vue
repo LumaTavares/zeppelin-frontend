@@ -32,7 +32,8 @@ import MonthlySale from '../components/ecommerce/MonthlyTarget.vue'
 import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
 import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
 import RecentOrders from '../components/ecommerce/RecentOrders.vue'
-import { useAuthStore, onMountedNotAuth } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
+import { offAuth } from '@/composables/offAuth'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -45,10 +46,10 @@ export default {
     StatisticsChart,
     RecentOrders,
   },
-  name: 'Ecommerce',
+  name: 'Dashboard',
   setup()
   {
-    onMountedNotAuth()
+    offAuth()
   },
 }
 

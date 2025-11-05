@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
+import { env } from '@/stores/env'
+import { api } from '@/services/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -26,8 +28,8 @@ export const useAuthStore = defineStore('auth', {
       }
 
       try {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
-        const response = await axios.get('http://localhost:8000/auth/api/me/')
+        api.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+        const response = await api.get('/auth/api/me/')
         this.user = response.data
         return response.data
       } catch (error) {
@@ -56,10 +58,10 @@ export const useAuthStore = defineStore('auth', {
         data.append('grant_type', 'password')
         data.append('username', email)
         data.append('password', password)
-        data.append('client_id', '#####')
-        data.append('client_secret', '########')
+        data.append('client_id', env.CLIENT_ID)
+        data.append('client_secret', env.CLIENT_SECRET)
 
-        const res = await axios.post('http://localhost:8000/o/token/', data, {
+        const res = await api.post('/o/token/', data, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           }
@@ -90,28 +92,3 @@ export const useAuthStore = defineStore('auth', {
     }
   }
 })
-
-// Funções para redirecionamento baseado na autenticação
-export function onMountedNotAuth() {
-
-  const auth = useAuthStore()
-  const router = useRouter()
-  
-  onMounted(() => {
-        if (!auth.isAuthenticated) {
-      router.push('/signin')
-    }
-  })  
-}
-
-export function onMountedAuth() {
-
-  const auth = useAuthStore()
-  const router = useRouter()
-  
-  onMounted(() => {
-        if (auth.isAuthenticated) {
-      router.push('/')
-    }
-  })  
-}
