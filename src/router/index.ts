@@ -199,7 +199,7 @@ export default router
 router.beforeEach((to, from, next) => {
   
   const auth = useAuthStore()
-  const publicPages = ['/signin', '/signup',]
+  const publicPages = ['/signin', '/signup', '/password-reset', '/reset-password',]
   const authRequired = !publicPages.includes(to.path)
 
   if (authRequired && !auth.isAuthenticated) {
