@@ -45,13 +45,9 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import ComponentCard from '@/components/common/ComponentCard.vue'
 import QuestionItem from './QuestionItem.vue'
-import { offAuth } from '@/composables/offAuth'
 
 import QUESTIONS from '@/data/agile_organization.json'
 import { useQuestionnaire } from '@/composables/useQuestionnaire'
-
-
-offAuth()
   
 const pageTitle = 'Agile Organization'
 const { answers, left, right, dump } = useQuestionnaire(QUESTIONS as any)
