@@ -21,5 +21,8 @@ import ProfileCard from '../../components/profile/ProfileCard.vue'
 import PersonalInfoCard from '../../components/profile/PersonalInfoCard.vue'
 import AddressCard from '../../components/profile/AddressCard.vue'
 
+
+
+
 const currentPageTitle = ref('User Profile')
 </script>
