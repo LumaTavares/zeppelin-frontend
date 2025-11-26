@@ -311,7 +311,155 @@
 
 <script setup>
 
+import Modal from './Modal.vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
+const auth = useAuthStore()
+
+// Estados
+const isProfileInfoModal = ref(false)
+
+const selectAcademicDegree = ref('')
+const SelectAcademicDegreeStatus = ref('')
+const selectExperienceLevel = ref('')
+const SelectPositionLevel = ref('')
+const role = ref('')
+const SelectKnwoledge_level = ref('')
+const SelectEmployee_experience_level = ref('')
+
+// Dados do usuário logado
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
+
+// Listas
+const academicDegrees = [
+  "Secondary Education",
+  "Undergraduate",
+  "Bachelor's Degree",
+  "Master's Degree",
+  "Doctorate",
+]
+
+const academicDegreeStatuses = [
+  "In Progress",
+  "Completed",
+] 
+
+const ExperienceLevel = [
+  "Junior",
+  "Mid-level",
+  "Senior",
+]
+
+const PositionLevel = [
+  "Project Manager",
+  "Scrum Master",
+  "Product Owner",
+  "Developer",
+  "Technical Lead",
+  "Director"
+]
+
+const Knwoledge_level = [
+  "Beginner",
+  "Intermediate",
+  "Advanced"
+]
+
+const employee_experience_level = [
+  "Beginner",
+  "Intermediate",
+  "Advanced"
+]
+
+// Carregar usuário
+onMounted(async () => {
+  if (auth.token && !auth.user) {
+    try {
+      await auth.fetchUser()
+    } catch (error) {
+      console.error('Erro ao carregar usuário:', error)
+    }
+  }
+})
+
+// Função MOCK para salvar
+const saveProfile = async () => {
+  const mockCreateEmployee = () => ({
+    id: 1,
+    e_mail: userEmail.value,
+    role: role.value,
+    employee_position: {
+      id: 22,
+      name: SelectPositionLevel.value
+    },
+    employee_organization: {
+      id: 99,
+      name: "Mock Organization"
+    }
+  })
+
+  const mockCreateEmployeeKnowledge = (employeeId) => ({
+    id: 2,
+    academic_degree: {
+      id: 11,
+      name: selectAcademicDegree.value
+    },
+    academic_degree_status: {
+      id: 12,
+      name: SelectAcademicDegreeStatus.value
+    },
+    employee: employeeId
+  })
+
+  const mockCreateKnowledgeLevel = (employeeId) => ({
+    id: 3,
+    stage: { id: 5, name: "Initial Stage" },
+    Knwoledge_level: {
+      id: 44,
+      name: SelectKnwoledge_level.value,
+      value:
+        SelectKnwoledge_level.value === "Beginner" ? 1 :
+        SelectKnwoledge_level.value === "Intermediate" ? 2 : 3
+    },
+    employee: employeeId
+  })
+
+  const mockCreateExperienceLevel = (employeeId) => ({
+    id: 4,
+    stage_experience_level: { id: 5, name: "Initial Stage" },
+    experience_level: {
+      id: 55,
+      name: selectExperienceLevel.value,
+      value:
+        selectExperienceLevel.value === "Junior" ? 1 :
+        selectExperienceLevel.value === "Mid-level" ? 2 : 3
+    },
+    employee_experience_level: employeeId
+  })
+
+  try {
+    const employee = mockCreateEmployee()
+    const employeeKnowledge = mockCreateEmployeeKnowledge(employee.id)
+    const knwoledgeLevel = mockCreateKnowledgeLevel(employee.id)
+    const experienceLevel = mockCreateExperienceLevel(employee.id)
+
+    console.log("MOCK enviado:", {
+      employee,
+      employeeKnowledge,
+      knwoledgeLevel,
+      experienceLevel
+    })
+
+    isProfileInfoModal.value = false
+
+
+  } catch (err) {
+    console.error("Erro mock:", err)
+  }
+}
+/*
 import Modal from './Modal.vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
@@ -368,6 +516,7 @@ const employee_experience_level =[
   "Advanced"
 ]
 
+/*
 //cadastrar o employee
 axios.post(
   'http://localhost:8000/employee/employee/',
@@ -401,9 +550,107 @@ const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
 const isProfileInfoModal = ref(false)
 
+
 const saveProfile = () => {
-  // Implement save profile logic here
-  console.log('Profile saved')
-  isProfileInfoModal.value = false
+  const saveProfile = async () => {
+  const mockCreateEmployee = () => ({
+    id: 1,
+    e_mail: userEmail.value,
+    role: role.value,
+    employee_position: {
+      id: 22,
+      name: SelectPositionLevel.value
+    },
+    employee_organization: {
+      id: 99,
+      name: "Mock Organization"
+    }
+  })
+
+  const mockCreateEmployeeKnowledge = (employeeId) => ({
+    id: 2,
+    academic_degree: {
+      id: 11,
+      name: selectAcademicDegree.value
+    },
+    academic_degree_status: {
+      id: 12,
+      name: SelectAcademicDegreeStatus.value
+    },
+    employee: employeeId
+  })
+
+  const mockCreateKnowledgeLevel = (employeeId) => ({
+    id: 3,
+    stage: {
+      id: 5,
+      name: "Initial Stage"
+    },
+    Knwoledge_level: {
+      id: 44,
+      name: SelectKnwoledge_level.value,
+      value: SelectKnwoledge_level.value === "Beginner" ? 1 :
+             SelectKnwoledge_level.value === "Intermediate" ? 2 : 3
+    },
+    employee: employeeId
+  })
+
+  const mockCreateExperienceLevel = (employeeId) => ({
+    id: 4,
+    stage_experience_level: {
+      id: 5,
+      name: "Initial Stage"
+    },
+    experience_level: {
+      id: 55,
+      name: selectExperienceLevel.value,
+      value: selectExperienceLevel.value === "Junior" ? 1 :
+             selectExperienceLevel.value === "Mid-level" ? 2 : 3
+    },
+    employee_experience_level: employeeId
+  })
+
+  
+  try {
+    
+    const employee = mockCreateEmployee()
+
+    
+    const employeeKnowledge = mockCreateEmployeeKnowledge(employee.id)
+
+    
+    const knwoledgeLevel = mockCreateKnowledgeLevel(employee.id)
+
+    
+    const experienceLevel = mockCreateExperienceLevel(employee.id)
+
+    console.log(" foi", {
+      employee,
+      employeeKnowledge,
+      knwoledgeLevel,
+      experienceLevel
+    })
+
+    // Simula resposta final do backend
+    const mockResponse = {
+      employee,
+      employeeKnowledge,
+      knwoledgeLevel,
+      experienceLevel
+    }
+
+    // Fecha modal
+    isProfileInfoModal.value = false
+
+    alert("Profile saved successfully! (MOCK)")
+
+    return mockResponse
+  } catch (err) {
+    console.error("erro mockK:", err)
+    alert("Error saving profile (MOCK)")
+  }
 }
+}
+
+*/
 </script>

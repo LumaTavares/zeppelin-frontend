@@ -303,6 +303,45 @@ const dict_category = {
 const isProfileAddressModal = ref(false)
 
 const saveProfile = async () => {
+
+  const mockCreateOrganizationType = () => {
+    return {
+      id: 123,               // ID fake
+      name: SelectType.value,
+      description: description.value,
+      category_organization_type: select_Bussines_Category.value
+    }
+  }
+
+  const mockCreateOrganization = (typeId) => {
+    return {
+      id: 999,
+      name: Bussines_name.value,
+      description: description.value,
+      organization_size: select_Bussines_size.value,
+      organization_type: typeId,
+      age: foundedYear.value,
+      location: selectedState.value
+    }
+  }
+
+  try {
+    const typeRes = mockCreateOrganizationType()
+    console.log(" tipo:", typeRes)
+
+    const orgRes = mockCreateOrganization(typeRes.id)
+    console.log(" org:", orgRes)
+
+    isProfileAddressModal.value = false
+  }
+  catch (error) {
+    console.error("error no mock:", error)
+  }
+}
+
+/*
+
+const saveProfile = async () => {
   const token = localStorage.getItem("access_token");
 
   try {
@@ -374,4 +413,5 @@ const saveProfile = async () => {
     alert('Error saving profile. Check console for details.');
   }
 };
+*/
 </script>
