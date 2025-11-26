@@ -63,11 +63,11 @@ const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
 const auth = useAuthStore()
 
-// ✅ Carrega dados do usuário ao montar o componente
+// Carrega dados do usuário ao montar o componente
 onMounted(async () => {
   if (auth.token && !auth.user) {
     try {
-      await auth.fetchUser() // Vamos criar essa função
+      await auth.fetchUser() 
     } catch (error) {
       console.error('Erro ao carregar usuário:', error)
     }

@@ -8,34 +8,64 @@
           </h4>
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">First Name</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">Musharof</p>
-            </div>
-
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Last Name</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">Chowdhury</p>
-            </div>
+            
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Email address
               </p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                randomuser@pimjo.com
+                {{userEmail}}
               </p>
             </div>
 
             <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Phone</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">+09 363 398 46</p>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ selectAcademicDegree }}</p>
             </div>
 
             <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Bio</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">Team Manager</p>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree Status</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ SelectAcademicDegreeStatus }}
+              </p>
             </div>
+
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Experience Level</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ selectExperienceLevel }}
+              </p>
+            </div> 
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Position Level</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ SelectPositionLevel }}
+              </p>
+            </div>
+
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Role</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ role }}
+              </p>
+            </div>
+
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Knowledge Level</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ SelectKnwoledge_level }}
+              </p>
+            </div>
+
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Employee Experience Level</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ SelectEmployee_experience_level }}
+              </p>
+            </div>
+
+
           </div>
         </div>
 
@@ -94,97 +124,16 @@
             </p>
           </div>
           <form class="flex flex-col">
-            <div class="custom-scrollbar h-[458px] overflow-y-auto p-2">
-              <div>
-                <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
-
-                <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Facebook
-                    </label>
-                    <input
-                      type="text"
-                      value="https://www.facebook.com/PimjoHQ"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      X.com
-                    </label>
-                    <input
-                      type="text"
-                      value="https://x.com/PimjoHQ"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Linkedin
-                    </label>
-                    <input
-                      type="text"
-                      value="https://www.linkedin.com/company/pimjo/posts/?feedView=all"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Instagram
-                    </label>
-                    <input
-                      type="text"
-                      value="https://instagram.com/PimjoHQ"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
-                </div>
-              </div>
+            <div class="custom-scrollbar max-h-[700px] overflow-y-auto p-2">
+              
               <div class="mt-7">
                 <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   Personal Information
                 </h5>
 
                 <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div class="col-span-2 lg:col-span-1">
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      value="Musharof"
-                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
+                  
 
-                  <div class="col-span-2 lg:col-span-1">
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      value="Chowdhury"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
 
                   <div class="col-span-2 lg:col-span-1">
                     <label
@@ -193,8 +142,9 @@
                       Email Address
                     </label>
                     <input
-                      type="text"
-                      value="emirhanboruch55@gmail.com"
+                      type="Email"
+                      disabled
+                      :value="userEmail"
                       class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     />
                   </div>
@@ -203,26 +153,135 @@
                     <label
                       class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                     >
-                      Phone
+                      Academic Degree
                     </label>
-                    <input
-                      type="text"
-                      value="+09 363 398 46"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
+                    <select
+                      v-model="selectAcademicDegree"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="degree in academicDegrees"
+                        :key="degree"
+                        :value="degree"
+                      >
+                        {{ degree }}
+                      </option>
+                    </select>
+                
                   </div>
 
                   <div class="col-span-2">
                     <label
                       class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                     >
-                      Bio
+                      Academic Degree Status
+                    </label>
+                    <select
+                      v-model="SelectAcademicDegreeStatus"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="status in academicDegreeStatuses"
+                        :key="status"
+                        :value="status"
+                      >
+                        {{ status }}
+                      </option>
+                    </select>
+                    
+                  </div>
+
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Experience Level
+                    </label>
+                    <select
+                      v-model="selectExperienceLevel"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="level in ExperienceLevel"
+                        :key="level"
+                        :value="level"
+                      >
+                        {{ level }}
+                      </option>
+                    </select>
+
+                  </div>
+
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Position Level
+                    </label>
+                    <select
+                      v-model="SelectPositionLevel"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="position in PositionLevel"
+                        :key="position"
+                        :value="position"
+                      >
+                        {{ position }}
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Role
                     </label>
                     <input
                       type="text"
-                      value="Team Manager"
+                      v-model="role"
                       class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     />
+                  </div>
+
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Knowledge Level
+                    </label>
+                    <select
+                      v-model="SelectKnwoledge_level"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="knowledge in Knwoledge_level"
+                        :key="knowledge"
+                        :value="knowledge"
+                      >
+                        {{ knowledge }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Employee Experience Level
+                    </label>
+                    <select
+                      v-model="SelectEmployee_experience_level"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    >
+                      <option
+                        v-for="experience in employee_experience_level"
+                        :key="experience"
+                        :value="experience"
+                      >
+                        {{ experience }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -251,8 +310,94 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+
+
 import Modal from './Modal.vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
+
+const auth = useAuthStore()
+
+const Email = ref('')
+const selectAcademicDegree = ref('')
+const SelectAcademicDegreeStatus = ref('')
+const selectExperienceLevel = ref('')
+const SelectPositionLevel = ref('')
+const role = ref('')
+const SelectKnwoledge_level = ref('')
+const SelectEmployee_experience_level = ref('')
+
+//listas
+const academicDegrees = [
+  "Secondary Education",
+  "Undergraduate",
+  "Bachelor's Degree",
+  "Master's Degree",
+  "Doctorate",
+]
+
+const academicDegreeStatuses = [
+  "In Progress",
+  "Completed",
+] 
+
+const ExperienceLevel =[
+  "Junior",
+  "Mid-level",
+  "Senior",
+]
+const PositionLevel =[
+  "Project Manager",
+  "Scrum Master",
+  "Product Owner",
+  "Developer",
+  "Technical Lead",
+  "Director"
+]
+
+const Knwoledge_level =[
+  "Beginner",
+  "Intermediate",
+  "Advanced"
+]
+
+const employee_experience_level =[
+  "Beginner",
+  "Intermediate",
+  "Advanced"
+]
+
+//cadastrar o employee
+axios.post(
+  'http://localhost:8000/employee/employee/',
+  {
+    email: Email.value,
+    position_level: SelectPositionLevel.value,
+    role: role.value,
+    
+    
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`
+    }
+  }
+
+)
+
+
+onMounted(async () => {
+  if (auth.token && !auth.user) {
+    try {
+      await auth.fetchUser() 
+    } catch (error) {
+      console.error('Erro ao carregar usuário:', error)
+    }
+  }
+})
+
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
 const isProfileInfoModal = ref(false)
 
