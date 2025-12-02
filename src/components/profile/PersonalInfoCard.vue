@@ -18,10 +18,24 @@
                 {{userEmail}}
               </p>
             </div>
+            
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization Name</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ props.organizationName }}</p>
+            </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ selectAcademicDegree }}</p>
+            </div>
+
+            <div>
+              <p>
+              class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400"Academic Degree Status</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                {{ AcademicDegreeName }}
+              </p>
             </div>
 
             <div>
@@ -37,6 +51,7 @@
                 {{ selectExperienceLevel }}
               </p>
             </div> 
+            
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Position Level</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
@@ -149,6 +164,19 @@
                     />
                   </div>
 
+                  <div>
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      Degree name 
+                    </label>
+                    <input
+                      type="text"
+                      v-model="AcademicDegreeName"
+                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                    />
+                  </div>
+
                   <div class="col-span-2 lg:col-span-1">
                     <label
                       class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
@@ -177,15 +205,15 @@
                       Academic Degree Status
                     </label>
                     <select
-                      v-model="SelectAcademicDegreeStatus"
+                      v-model="selectAcademicDegreeStatus"
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
                         v-for="status in academicDegreeStatuses"
-                        :key="status"
-                        :value="status"
+                        :key="status.value"
+                        :value="status.label"
                       >
-                        {{ status }}
+                        {{ status.label }}
                       </option>
                     </select>
                     
@@ -202,7 +230,7 @@
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
-                        v-for="level in ExperienceLevel"
+                        v-for="level in experienceLevels"
                         :key="level"
                         :value="level"
                       >
@@ -223,7 +251,7 @@
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
-                        v-for="position in PositionLevel"
+                        v-for="position in positionLevels"
                         :key="position"
                         :value="position"
                       >
@@ -255,7 +283,7 @@
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
-                        v-for="knowledge in Knwoledge_level"
+                        v-for="knowledge in knowledgeLevels"
                         :key="knowledge"
                         :value="knowledge"
                       >
@@ -275,7 +303,7 @@
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
-                        v-for="experience in employee_experience_level"
+                        v-for="experience in employeeExperienceLevels"
                         :key="experience"
                         :value="experience"
                       >
@@ -310,27 +338,27 @@
 </template>
 
 <script setup>
-
 import Modal from './Modal.vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useOrganizationStore } from '@/stores/organization';
 import axios from 'axios'
 
-const auth = useAuthStore()
+const props = defineProps({
+  organizationName: String,
+})
 
-// Estados
-const isProfileInfoModal = ref(false)
+const auth = useAuthStore()
+const organizationStore = useOrganizationStore();
 
 const selectAcademicDegree = ref('')
-const SelectAcademicDegreeStatus = ref('')
+const AcademicDegreeName = ref('')
+const selectAcademicDegreeStatus = ref('')
 const selectExperienceLevel = ref('')
-const SelectPositionLevel = ref('')
+const selectPositionLevel = ref('')
 const role = ref('')
-const SelectKnwoledge_level = ref('')
-const SelectEmployee_experience_level = ref('')
-
-// Dados do usuário logado
-const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
+const selectKnowledgeLevel = ref('')
+const selectEmployeeExperienceLevel = ref('')
 
 // Listas
 const academicDegrees = [
@@ -342,17 +370,17 @@ const academicDegrees = [
 ]
 
 const academicDegreeStatuses = [
-  "In Progress",
-  "Completed",
+  { label: "In Progress", value: 1 },
+  { label: "Completed", value: 2 },
 ] 
 
-const ExperienceLevel = [
+const experienceLevels = [
   "Junior",
   "Mid-level",
   "Senior",
 ]
 
-const PositionLevel = [
+const positionLevels = [
   "Project Manager",
   "Scrum Master",
   "Product Owner",
@@ -361,13 +389,13 @@ const PositionLevel = [
   "Director"
 ]
 
-const Knwoledge_level = [
+const knowledgeLevels = [
   "Beginner",
   "Intermediate",
   "Advanced"
 ]
 
-const employee_experience_level = [
+const employeeExperienceLevels = [
   "Beginner",
   "Intermediate",
   "Advanced"
@@ -384,273 +412,83 @@ onMounted(async () => {
   }
 })
 
-// Função MOCK para salvar
-const saveProfile = async () => {
-  const mockCreateEmployee = () => ({
-    id: 1,
-    e_mail: userEmail.value,
-    role: role.value,
-    employee_position: {
-      id: 22,
-      name: SelectPositionLevel.value
-    },
-    employee_organization: {
-      id: 99,
-      name: "Mock Organization"
-    }
-  })
-
-  const mockCreateEmployeeKnowledge = (employeeId) => ({
-    id: 2,
-    academic_degree: {
-      id: 11,
-      name: selectAcademicDegree.value
-    },
-    academic_degree_status: {
-      id: 12,
-      name: SelectAcademicDegreeStatus.value
-    },
-    employee: employeeId
-  })
-
-  const mockCreateKnowledgeLevel = (employeeId) => ({
-    id: 3,
-    stage: { id: 5, name: "Initial Stage" },
-    Knwoledge_level: {
-      id: 44,
-      name: SelectKnwoledge_level.value,
-      value:
-        SelectKnwoledge_level.value === "Beginner" ? 1 :
-        SelectKnwoledge_level.value === "Intermediate" ? 2 : 3
-    },
-    employee: employeeId
-  })
-
-  const mockCreateExperienceLevel = (employeeId) => ({
-    id: 4,
-    stage_experience_level: { id: 5, name: "Initial Stage" },
-    experience_level: {
-      id: 55,
-      name: selectExperienceLevel.value,
-      value:
-        selectExperienceLevel.value === "Junior" ? 1 :
-        selectExperienceLevel.value === "Mid-level" ? 2 : 3
-    },
-    employee_experience_level: employeeId
-  })
-
-  try {
-    const employee = mockCreateEmployee()
-    const employeeKnowledge = mockCreateEmployeeKnowledge(employee.id)
-    const knwoledgeLevel = mockCreateKnowledgeLevel(employee.id)
-    const experienceLevel = mockCreateExperienceLevel(employee.id)
-
-    console.log("MOCK enviado:", {
-      employee,
-      employeeKnowledge,
-      knwoledgeLevel,
-      experienceLevel
-    })
-
-    isProfileInfoModal.value = false
-
-
-  } catch (err) {
-    console.error("Erro mock:", err)
-  }
-}
-/*
-import Modal from './Modal.vue'
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
-
-const auth = useAuthStore()
-
-const Email = ref('')
-const selectAcademicDegree = ref('')
-const SelectAcademicDegreeStatus = ref('')
-const selectExperienceLevel = ref('')
-const SelectPositionLevel = ref('')
-const role = ref('')
-const SelectKnwoledge_level = ref('')
-const SelectEmployee_experience_level = ref('')
-
-//listas
-const academicDegrees = [
-  "Secondary Education",
-  "Undergraduate",
-  "Bachelor's Degree",
-  "Master's Degree",
-  "Doctorate",
-]
-
-const academicDegreeStatuses = [
-  "In Progress",
-  "Completed",
-] 
-
-const ExperienceLevel =[
-  "Junior",
-  "Mid-level",
-  "Senior",
-]
-const PositionLevel =[
-  "Project Manager",
-  "Scrum Master",
-  "Product Owner",
-  "Developer",
-  "Technical Lead",
-  "Director"
-]
-
-const Knwoledge_level =[
-  "Beginner",
-  "Intermediate",
-  "Advanced"
-]
-
-const employee_experience_level =[
-  "Beginner",
-  "Intermediate",
-  "Advanced"
-]
-
-/*
-//cadastrar o employee
-axios.post(
-  'http://localhost:8000/employee/employee/',
-  {
-    email: Email.value,
-    position_level: SelectPositionLevel.value,
-    role: role.value,
-    
-    
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("access_token")}`
-    }
-  }
-
-)
-
-
-onMounted(async () => {
-  if (auth.token && !auth.user) {
-    try {
-      await auth.fetchUser() 
-    } catch (error) {
-      console.error('Erro ao carregar usuário:', error)
-    }
-  }
-})
-
 const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
 const isProfileInfoModal = ref(false)
 
-
-const saveProfile = () => {
-  const saveProfile = async () => {
-  const mockCreateEmployee = () => ({
-    id: 1,
-    e_mail: userEmail.value,
-    role: role.value,
-    employee_position: {
-      id: 22,
-      name: SelectPositionLevel.value
-    },
-    employee_organization: {
-      id: 99,
-      name: "Mock Organization"
-    }
-  })
-
-  const mockCreateEmployeeKnowledge = (employeeId) => ({
-    id: 2,
-    academic_degree: {
-      id: 11,
-      name: selectAcademicDegree.value
-    },
-    academic_degree_status: {
-      id: 12,
-      name: SelectAcademicDegreeStatus.value
-    },
-    employee: employeeId
-  })
-
-  const mockCreateKnowledgeLevel = (employeeId) => ({
-    id: 3,
-    stage: {
-      id: 5,
-      name: "Initial Stage"
-    },
-    Knwoledge_level: {
-      id: 44,
-      name: SelectKnwoledge_level.value,
-      value: SelectKnwoledge_level.value === "Beginner" ? 1 :
-             SelectKnwoledge_level.value === "Intermediate" ? 2 : 3
-    },
-    employee: employeeId
-  })
-
-  const mockCreateExperienceLevel = (employeeId) => ({
-    id: 4,
-    stage_experience_level: {
-      id: 5,
-      name: "Initial Stage"
-    },
-    experience_level: {
-      id: 55,
-      name: selectExperienceLevel.value,
-      value: selectExperienceLevel.value === "Junior" ? 1 :
-             selectExperienceLevel.value === "Mid-level" ? 2 : 3
-    },
-    employee_experience_level: employeeId
-  })
-
-  
+const saveProfile = async () => {
   try {
-    
-    const employee = mockCreateEmployee()
+    // Primeira requisição: Criar Employee
+    const employeeResponse = await axios.post(
+      'http://localhost:8000/employee/employee/',
+      {
+        e_mail: userEmail.value,
+        role: role.value,
+        employee_position: selectPositionLevel.value, // Enviar apenas o ID
+        employee_organization: organizationStore.organizationId, // Usar o ID do store
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }
+      }
+    );
+    console.log('Perfil salvo com sucesso:', employeeResponse.data);
 
-    
-    const employeeKnowledge = mockCreateEmployeeKnowledge(employee.id)
+    // Capturar o ID do Employee criado
+    const employeeId = employeeResponse.data.id;
 
-    
-    const knwoledgeLevel = mockCreateKnowledgeLevel(employee.id)
+    // Segunda requisição: Criar AcademicDegree
+    const academicDegreeResponse = await axios.post(
+      'http://localhost:8000/employee/academicdegree/',
+      {
+        degree_name: selectAcademicDegree.value,
+        degree_type: selectAcademicDegree.value, // Corrigir o nome do campo se necessário
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }
+      }
+    );
+    console.log('Grau acadêmico salvo com sucesso:', academicDegreeResponse.data);
 
-    
-    const experienceLevel = mockCreateExperienceLevel(employee.id)
+    // Capturar o ID do AcademicDegree criado
+    const academicDegreeId = academicDegreeResponse.data.id;
 
-    console.log(" foi", {
-      employee,
-      employeeKnowledge,
-      knwoledgeLevel,
-      experienceLevel
-    })
+    // Mapear o valor de selectAcademicDegreeStatus para o ID correspondente
+    const academicDegreeStatusId = academicDegreeStatuses.find(
+      (status) => status.label === selectAcademicDegreeStatus.value
+    )?.value;
 
-    // Simula resposta final do backend
-    const mockResponse = {
-      employee,
-      employeeKnowledge,
-      knwoledgeLevel,
-      experienceLevel
+    // Terceira requisição: Criar EmployeeKnowledge
+    const employeeKnowledgeResponse = await axios.post(
+      'http://localhost:8000/employee/employeeknowledge/',
+      {
+        academic_degree: academicDegreeId, // Enviar apenas o ID
+        academic_degree_status: academicDegreeStatusId, // Enviar o ID correspondente
+        employee: employeeId // Enviar apenas o ID
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }
+      }
+    );
+    console.log('Conhecimento do funcionário salvo com sucesso:', employeeKnowledgeResponse.data);
+
+    // Fechar o modal após salvar tudo
+    isProfileInfoModal.value = false;
+  } catch (error) {
+    console.error('Erro ao salvar perfil ou conhecimento:', error);
+
+    // Exibir mensagem de erro detalhada
+    if (error.response) {
+      console.error('Erro no backend:', error.response.data);
+    } else {
+      console.error('Erro na requisição:', error.message);
     }
-
-    // Fecha modal
-    isProfileInfoModal.value = false
-
-    alert("Profile saved successfully! (MOCK)")
-
-    return mockResponse
-  } catch (err) {
-    console.error("erro mockK:", err)
-    alert("Error saving profile (MOCK)")
   }
-}
-}
-
-*/
+};
+ 
 </script>

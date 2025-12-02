@@ -8,9 +8,9 @@
       <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">Profile</h3>
       <profile-card />
       <address-card 
-       @update:businessName="Bussines_name = $event"/>
-      <personal-info-card />
-      
+        v-model:businessName="organizationName" />
+      <personal-info-card 
+        v-model:organizationName="organizationName" />
     </div>
   </admin-layout>
 </template>
@@ -23,9 +23,9 @@ import AddressCard from '../../components/profile/AddressCard.vue'
 import ProfileCard from '../../components/profile/ProfileCard.vue'
 import PersonalInfoCard from '../../components/profile/PersonalInfoCard.vue'
 
-
-
-
-
 const currentPageTitle = ref('User Profile')
+
+//compartilhar nome da organização
+const organizationName = ref('') //constante pro nome da organização
+
 </script>

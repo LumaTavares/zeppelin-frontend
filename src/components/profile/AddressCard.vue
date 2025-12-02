@@ -229,9 +229,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch , defineProps, defineEmits} from 'vue'
 import Modal from './Modal.vue'
 import axios from 'axios'
+import { useOrganizationStore } from '@/stores/organization';
 
 // campos do forms com v-model
 const Bussines_name = ref('')
@@ -243,6 +244,18 @@ const select_Bussines_Category = ref('')
 const description = ref('')
 
 // listas do select
+
+const props = defineProps({
+  Bussines_name: {
+    type: String,
+    default: ''
+  }
+})
+
+const localBusinessName = ref(props.Bussines_name)
+watch(() => props.Bussines_name, (newVal) => {
+  localBusinessName.value = newVal
+})
 
 const category= [
   'Finance',
@@ -291,63 +304,21 @@ const dict_estados = {
 
 //mudar isso depois NAO ESQUECEEEEEEEERRRRRRRRRRRR
 const dict_category = {
-  6: 'Finance',
-  7: 'Health',
-  8: 'Education',
-  9: 'Technology',
-  10: 'Retail',
-  11: 'Manufacturing'
+  1: 'Finance',
+  2: 'Health',
+  3: 'Education',
+  4: 'Technology',
+  5: 'Retail',
+  6: 'Manufacturing'
 }
-
-// modal
-const isProfileAddressModal = ref(false)
-
-const saveProfile = async () => {
-
-  const mockCreateOrganizationType = () => {
-    return {
-      id: 123,               // ID fake
-      name: SelectType.value,
-      description: description.value,
-      category_organization_type: select_Bussines_Category.value
-    }
-  }
-
-  const mockCreateOrganization = (typeId) => {
-    return {
-      id: 999,
-      name: Bussines_name.value,
-      description: description.value,
-      organization_size: select_Bussines_size.value,
-      organization_type: typeId,
-      age: foundedYear.value,
-      location: selectedState.value
-    }
-  }
-
-  try {
-    const typeRes = mockCreateOrganizationType()
-    console.log(" tipo:", typeRes)
-
-    const orgRes = mockCreateOrganization(typeRes.id)
-    console.log(" org:", orgRes)
-
-    isProfileAddressModal.value = false
-  }
-  catch (error) {
-    console.error("error no mock:", error)
-  }
-}
-
-/*
 
 const saveProfile = async () => {
   const token = localStorage.getItem("access_token");
+  const organizationStore = useOrganizationStore();
 
   try {
     // Validação básica
-    if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value || !select_Bussines_Category.value)
- {
+    if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value || !select_Bussines_Category.value) {
       alert('Please fill all fields');
       return;
     }
@@ -402,8 +373,13 @@ const saveProfile = async () => {
       }
     );
 
-    console.log('Success:', response_organization.data);
-    
+    // capturar o ID da organização criada
+    const organizationId = response_organization.data.id;
+    console.log('Organização criada com ID:', organizationId);
+
+    // Salvar o ID no store global
+    organizationStore.setOrganizationId(organizationId);
+
     // Fechar modal após sucesso
     isProfileAddressModal.value = false;
     alert('Profile saved successfully!');
@@ -413,5 +389,7 @@ const saveProfile = async () => {
     alert('Error saving profile. Check console for details.');
   }
 };
-*/
+
+const isProfileAddressModal = ref(false);
+
 </script>
