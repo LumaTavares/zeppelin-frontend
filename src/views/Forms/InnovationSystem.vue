@@ -5,7 +5,7 @@
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
       <div class="space-y-6">
         <ComponentCard :title="pageTitle">
-          <div class="space-y-4">
+          <div class="space-y-4 dark:text-white ">
             <QuestionItem
               v-for="q in left"
               :key="q.id"
@@ -19,7 +19,7 @@
 
       <div class="space-y-6">
         <ComponentCard title="continuação">
-          <div class="space-y-4">
+          <div class="space-y-4 dark:text-white">
             <QuestionItem
               v-for="q in right"
               :key="q.id"
@@ -31,8 +31,8 @@
         </ComponentCard>
 
         <div class="flex justify-end">
-          <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" @click="submit">
-            salvar (console.log)
+          <button class="px-4 py-2 bg-brand-950  text-white rounded-lg hover:bg-brand-900" @click="submit">
+            salvar
           </button>
         </div>
       </div>
