@@ -20,29 +20,10 @@
       ]"
     >
       <router-link to="/">
-        <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="dark:hidden"
-          src="/images/logo/logo.svg"
-          alt="Logo"
-          width="150"
-          height="40"
-        />
-        <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="hidden dark:block"
-          src="/images/logo/logo-dark.svg"
-          alt="Logo"
-          width="150"
-          height="40"
-        />
-        <img
-          v-else
-          src="/images/logo/logo-icon.svg"
-          alt="Logo"
-          width="32"
-          height="32"
-        />
+        <div>
+          <p class="text-brand-950">ZEPPELIN</p>
+        </div>
+        
       </router-link>
     </div>
     <div
@@ -70,7 +51,7 @@
                   v-if="item.subItems"
                   @click="toggleSubmenu(groupIndex, index)"
                   :class="[
-                    'menu-item group w-full',
+                    'menu-item group hover:bg-gray-200 hover:text-gray-800',
                     {
                       'menu-item-active': isSubmenuOpen(groupIndex, index),
                       'menu-item-inactive': !isSubmenuOpen(groupIndex, index),
@@ -206,7 +187,7 @@
           </div>
         </div>
       </nav>
-      <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" />
+      
     </div>
   </aside>
 </template>
@@ -229,8 +210,8 @@ import {
   TableIcon,
   ListIcon,
   PlugInIcon,
-} from "../../icons";
-import SidebarWidget from "./SidebarWidget.vue";
+} 
+from "../../icons";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
 
@@ -265,20 +246,7 @@ const menuGroups = [
       },
     ],
   },
-  {
-    title: "Others",
-    items: [
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
-        ],
-      },
-      // ... Add other menu items here
-    ],
-  },
+  
 ];
 
 const isActive = (path) => route.path === path;

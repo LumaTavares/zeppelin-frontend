@@ -51,7 +51,7 @@ layer(base);
   --color-brand-600: #3641f5;
   --color-brand-700: #2a31d8;
   --color-brand-800: #252dae;
-  --color-brand-900: #262e89;
+  --color-brand-900: #a0b469;
   --color-brand-950: #C8E284;
 
   --color-blue-light-25: #f5fbff;
@@ -772,4 +772,31 @@ span.flatpickr-weekday,
   width: 90vh ;
   padding-left: 10%;
   
+}
+
+.menu-item:hover {
+  background-color: #C8E284; /* Exemplo de cor */
+  color: white;/* Exemplo de cor do texto */
+}
+
+.menu-item-active {
+  background-color: #C8E284; 
+  color: white; 
+} 
+
+.menu-item-icon-active {
+  color: white; 
+}
+.menu-item-icon-inactive {
+  color: gray; 
+}
+
+.menu-dropdown-item-active {
+  background-color: #C8E284; /* Cor de fundo para subitem ativo */
+  color: white; /* Cor do texto para subitem ativo */
+}
+
+.menu-dropdown-item-inactive {
+  background-color: transparent; 
+  color: #6b7280; 
 }
