@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="p-5 mb-6 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div v-if="showcard" class="p-5 mb-6 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 class="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -83,7 +83,7 @@
           </div>
         </div>
 
-        <button class="edit-button" @click="isProfileInfoModal = true">
+        <button class="edit-button" @click="isProfileInfoModal = true ">
           <svg
             class="fill-current"
             width="18"
@@ -322,12 +322,7 @@
                 Close
               </button>
 
-              <button
-                @click="voltar"
-                type="button"
-                class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto">
-              Back
-              </button>
+
               <button
                 @click="saveProfile"
                 type="button"
@@ -345,18 +340,19 @@
 
 <script setup>
 import Modal from './Modal.vue'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useOrganizationStore } from '@/stores/organization';
 import axios from 'axios'
 
 const props = defineProps({
   organizationName: String,
+  showPersonalInfoCard: Boolean,
 })
 
 const auth = useAuthStore()
 const organizationStore = useOrganizationStore();
-
+const showcard = ref(false)
 const selectAcademicDegree = ref('')
 const AcademicDegreeName = ref('')
 const selectAcademicDegreeStatus = ref('')
@@ -407,6 +403,19 @@ const employeeExperienceLevels = [
   "Advanced"
 ]
 
+watch(
+  () => props.showPersonalInfoCard,
+  (newVal) => {
+    if (newVal) {
+      showcard.value = true;
+      isProfileInfoModal.value = true;
+    } else {
+      showcard.value = false;
+      isProfileInfoModal.value = false;
+    }
+  }
+);
+
 // Carregar usuário
 onMounted(async () => {
   if (auth.token && !auth.user) {
@@ -416,7 +425,7 @@ onMounted(async () => {
       console.error('Erro ao carregar usuário:', error)
     }
   }
-})
+});
 
 const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
@@ -496,5 +505,4 @@ const saveProfile = async () => {
     }
   }
 };
- 
 </script>

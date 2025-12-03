@@ -228,74 +228,73 @@
       </template>
     </Modal>
 
-    <!-- PersonalInfoCard is conditionally rendered -->
-    <PersonalInfoCard v-if="showPersonalInfoCard" class="z-40 relative" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch , defineProps, defineEmits} from 'vue'
-import Modal from './Modal.vue'
-import axios from 'axios'
+import { onMounted, ref, watch, defineProps, defineEmits } from 'vue';
+import Modal from './Modal.vue';
+import axios from 'axios';
 import { useOrganizationStore } from '@/stores/organization';
 import PersonalInfoCard from './PersonalInfoCard.vue';
 
-const showAddressCard = ref(true); // Track visibility of AddressCard
-const showPersonalInfoCard = ref(false); // Track visibility of PersonalInfoCard
-
-const proximatela = () => {
-  if (showAddressCard.value) {
-    showAddressCard.value = false;
-    showPersonalInfoCard.value = true; // Show PersonalInfoCard after AddressCard
-  }
-};
-
-// campos do forms com v-model
-const Bussines_name = ref('')
-const selectedState = ref('')
-const foundedYear = ref(null)
-const SelectType = ref('')
-const select_Bussines_size = ref('')
-const select_Bussines_Category = ref('')
-const description = ref('')
-
-// listas do select
-
+// Define props and emits
+const emit = defineEmits(['update:showPersonalInfoCard']);
 const props = defineProps({
   Bussines_name: {
     type: String,
     default: ''
+  },
+  showPersonalInfoCard: {
+    type: Boolean,
+    default: false
   }
-})
+});
 
-const localBusinessName = ref(props.Bussines_name)
+// Local state
+const Bussines_name = ref('');
+const selectedState = ref('');
+const foundedYear = ref(null);
+const SelectType = ref('');
+const select_Bussines_size = ref('');
+const select_Bussines_Category = ref('');
+const description = ref('');
+const showAddressCard = ref(true);
+const showPersonalInfoCard = ref(false);
+
+// Function to update and emit showPersonalInfoCard
+const updateShowPersonalInfoCard = (value) => {
+  showPersonalInfoCard.value = value;
+  emit('update:showPersonalInfoCard', value);
+};
+
+// Transition to PersonalInfoCard
+const proximatela = () => {
+  showAddressCard.value = false;
+  isProfileAddressModal.value = false;
+  updateShowPersonalInfoCard(true);
+};
+
+// Watch for prop changes
 watch(() => props.Bussines_name, (newVal) => {
-  localBusinessName.value = newVal
-})
+  Bussines_name.value = newVal;
+});
 
-const category= [
-  'Finance',
-  'Health',
-  'Education',
-  'Technology',
-  'Retail',
-  'Manufacturing'
-]
-const estados = ['ES','RJ','SP']
-
+// Select options
+const category = ['Finance', 'Health', 'Education', 'Technology', 'Retail', 'Manufacturing'];
+const estados = ['ES', 'RJ', 'SP'];
 const Type_Bussines = [
   'Factory',
   'Startup',
   'Private Company with an IT Department',
   'Single-product Software Company (e.g. Airbnb, Uber)'
-]
-
+];
 const Bussines_size = [
   '01 to 09 employees',
   '10 to 49 employees',
   '50 to 99 employees',
   'More than 99 employees'
-]
+];
 
 // DICIONÁRIOS PARA MAPEAR VALORES PARA IDs - CORRIGIDO
 const dict_size = {

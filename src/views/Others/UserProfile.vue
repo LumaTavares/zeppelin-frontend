@@ -12,7 +12,9 @@
         v-model:showPersonalInfoCard="personainfoshow"
         />
       <personal-info-card 
-        v-model:organizationName="organizationName" />
+        v-model:organizationName="organizationName" 
+        v-model:showPersonalInfoCard="personainfoshow"
+        />
     </div>
   </admin-layout>
 </template>
@@ -29,4 +31,5 @@ const currentPageTitle = ref('User Profile')
 //compartilhar nome da organização
 const organizationName = ref('') //constante pro nome da organização
 const personainfoshow = ref(false) //variável que to bizoaiando 
+ 
 </script>
