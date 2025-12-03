@@ -21,8 +21,6 @@ import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import { ref } from 'vue'
 import AddressCard from '../../components/profile/AddressCard.vue'
 import ProfileCard from '../../components/profile/ProfileCard.vue'
-import PersonalInfoCard from '../../components/profile/PersonalInfoCard.vue'
-
 const currentPageTitle = ref('User Profile')
 
 //compartilhar nome da organização

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <!-- AddressCard content -->
+    <div v-if="showAddressCard" class="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 class="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">organization</h4>
@@ -75,7 +76,7 @@
     <Modal v-if="isProfileAddressModal" @close="isProfileAddressModal = false">
       <template #body>
         <div
-          class="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11"
+          class="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 z-50"
         >
           <button
             @click="isProfileAddressModal = false"
@@ -109,7 +110,7 @@
                   />
                 </div>
 
-                <!-- SELECT Estado - CORRIGIDO -->
+                <!-- SELECT Estado -  -->
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                     City/State
@@ -213,18 +214,22 @@
               </button>
 
               <button
-                @click="saveProfile"
+                @click="proximatela"
                 type="button"
-                class="flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white sm:w-auto hover:bg-brand-600"
+                class="flex w-full justify-center rounded-lg border bg-brand-950   px-4 py-2.5 text-sm sm:w-auto hover:bg-brand-900"
               >
-                Save Changes
+                Next Step
               </button>
+              
             </div>
 
           </form>
         </div>
       </template>
     </Modal>
+
+    <!-- PersonalInfoCard is conditionally rendered -->
+    <PersonalInfoCard v-if="showPersonalInfoCard" class="z-40 relative" />
   </div>
 </template>
 
@@ -233,6 +238,17 @@ import { onMounted, ref, watch , defineProps, defineEmits} from 'vue'
 import Modal from './Modal.vue'
 import axios from 'axios'
 import { useOrganizationStore } from '@/stores/organization';
+import PersonalInfoCard from './PersonalInfoCard.vue';
+
+const showAddressCard = ref(true); // Track visibility of AddressCard
+const showPersonalInfoCard = ref(false); // Track visibility of PersonalInfoCard
+
+const proximatela = () => {
+  if (showAddressCard.value) {
+    showAddressCard.value = false;
+    showPersonalInfoCard.value = true; // Show PersonalInfoCard after AddressCard
+  }
+};
 
 // campos do forms com v-model
 const Bussines_name = ref('')
