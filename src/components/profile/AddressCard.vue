@@ -10,14 +10,14 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Name</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ Bussines_name }}
+                {{ Bussines_name || organization.name }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">State</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectedState }}
+                {{ selectedState || stateMapping[organization.location] }}
               </p>
             </div>
 
@@ -27,21 +27,21 @@
                 Founded year
               </p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ foundedYear }}
+                {{ foundedYear || organization.age }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Type of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectType }}
+                {{ SelectType || typeMapping[organization.organization_type] }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Category of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_Category }}
+                {{ select_Bussines_Category || organization.description }}
               </p>
             </div>
 
@@ -49,23 +49,25 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization size</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_size }}
+                {{ select_Bussines_size || sizeMapping[organization.organization_size] }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Description</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ description }}
+                {{ description || organization.description }}
               </p>
             </div>
             
           </div>
         </div>
 
+        <!-- Disable if organization.name exists -->
         <button
           @click="isProfileAddressModal = true"
-          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+          :disabled="!!organization.name"
+          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Edit
         </button>
@@ -228,74 +230,86 @@
       </template>
     </Modal>
 
-    <!-- PersonalInfoCard is conditionally rendered -->
-    <PersonalInfoCard v-if="showPersonalInfoCard" class="z-40 relative" />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch , defineProps, defineEmits} from 'vue'
-import Modal from './Modal.vue'
-import axios from 'axios'
+import { onMounted, ref, watch, computed, defineProps, defineEmits } from 'vue';
+import Modal from './Modal.vue';
+import axios from 'axios';
 import { useOrganizationStore } from '@/stores/organization';
+import { useAuthStore } from '@/stores/auth';
 import PersonalInfoCard from './PersonalInfoCard.vue';
 
-const showAddressCard = ref(true); // Track visibility of AddressCard
-const showPersonalInfoCard = ref(false); // Track visibility of PersonalInfoCard
-
-const proximatela = () => {
-  if (showAddressCard.value) {
-    showAddressCard.value = false;
-    showPersonalInfoCard.value = true; // Show PersonalInfoCard after AddressCard
-  }
-};
-
-// campos do forms com v-model
-const Bussines_name = ref('')
-const selectedState = ref('')
-const foundedYear = ref(null)
-const SelectType = ref('')
-const select_Bussines_size = ref('')
-const select_Bussines_Category = ref('')
-const description = ref('')
-
-// listas do select
-
+// Define props and emits
+const emit = defineEmits(['update:showPersonalInfoCard']);
 const props = defineProps({
   Bussines_name: {
     type: String,
     default: ''
-  }
-})
+  },
+  showPersonalInfoCard: {
+    type: Boolean,
+    default: false
+  },
+  salvarorganização:Boolean,
+});
 
-const localBusinessName = ref(props.Bussines_name)
+// Local state
+const Bussines_name = ref('');
+const selectedState = ref('');
+const foundedYear = ref(null);
+const SelectType = ref('');
+const select_Bussines_size = ref('');
+const select_Bussines_Category = ref('');
+const description = ref('');
+const showAddressCard = ref(true);
+const showPersonalInfoCard = ref(false);
+const organization = ref({}); // Reactive variable for organization data
+
+const auth = useAuthStore();
+const userEmail = computed(() => auth.user?.email);
+
+// Function to update and emit showPersonalInfoCard
+const updateShowPersonalInfoCard = (value) => {
+  showPersonalInfoCard.value = value;
+  emit('update:showPersonalInfoCard', value);
+};
+
+// Transition to PersonalInfoCard
+const proximatela = () => {
+  showAddressCard.value = false;
+  isProfileAddressModal.value = false;
+  updateShowPersonalInfoCard(true);
+};
+
+// Watch for prop changes
 watch(() => props.Bussines_name, (newVal) => {
-  localBusinessName.value = newVal
-})
+  Bussines_name.value = newVal;
+});
 
-const category= [
-  'Finance',
-  'Health',
-  'Education',
-  'Technology',
-  'Retail',
-  'Manufacturing'
-]
-const estados = ['ES','RJ','SP']
+// Watch for changes in salvarorganização prop
+watch(() => props.salvarorganização, (newVal) => {
+  if (newVal) {
+    saveProfile();
+  }
+});
 
+// Select options
+const category = ['Finance', 'Health', 'Education', 'Technology', 'Retail', 'Manufacturing'];
+const estados = ['ES', 'RJ', 'SP'];
 const Type_Bussines = [
   'Factory',
   'Startup',
   'Private Company with an IT Department',
   'Single-product Software Company (e.g. Airbnb, Uber)'
-]
-
+];
 const Bussines_size = [
   '01 to 09 employees',
   '10 to 49 employees',
   '50 to 99 employees',
   'More than 99 employees'
-]
+];
 
 // DICIONÁRIOS PARA MAPEAR VALORES PARA IDs - CORRIGIDO
 const dict_size = {
@@ -327,6 +341,56 @@ const dict_category = {
   5: 'Retail',
   6: 'Manufacturing'
 }
+
+
+// Function to fetch employee data
+const fetchEmployeeData = async () => {
+  try {
+    const response_funcionario = await axios.get("http://localhost:8000/employee/employee/", {
+      headers: {
+        Authorization: `Bearer ${auth.token}`
+      },
+      params: {
+        limit: 100 // Adjust the limit as needed
+      }
+    });
+
+    // Access the `data` property inside the response object
+    const funcionarios = response_funcionario.data?.data;
+
+    console.log("Lista de funcionários:", funcionarios); // Log the entire array
+    console.log("userEmail:", userEmail.value); // Log the userEmail value
+
+    if (Array.isArray(funcionarios)) {
+      for (const funcionario of funcionarios) {
+        console.log("Verificando funcionário:", funcionario); // Log each funcionario object
+        if (funcionario?.e_mail === userEmail.value) {
+          console.log("Funcionário encontrado:", funcionario); // Log when a match is found
+
+          // Assign organization data to the reactive variable
+          if (funcionario.employee_organization) {
+            organization.value = funcionario.employee_organization;
+            console.log("Dados da organização atribuídos:", organization.value);  
+            
+
+          } else {
+            console.log("Funcionário não possui organização associada.");
+          }
+          break; 
+        }
+      }
+    } else {
+      console.error("Erro: response_funcionario.data.data não é um array:", funcionarios);
+    }
+  } catch (error) {
+    console.error("Erro ao buscar funcionário:", error.response || error.message || "Erro desconhecido");
+  }
+};
+
+onMounted(() => {
+  console.log('Component mounted. Fetching employee data...');
+  fetchEmployeeData();
+});
 
 const saveProfile = async () => {
   const token = localStorage.getItem("access_token");
@@ -367,7 +431,6 @@ const saveProfile = async () => {
       }
     );
 
-    // PEGA O ID RETORNADO (geralmente vem em response.data.id)
     const created_type_id = response_OrganizationType.data.id;
     console.log('Type criado com ID:', created_type_id);
 
@@ -378,7 +441,7 @@ const saveProfile = async () => {
         name: Bussines_name.value,
         description: description.value,
         organization_size: size_id,
-        organization_type: created_type_id,  // ← USA O ID RETORNADO AQUI
+        organization_type: created_type_id, 
         age: foundedYear.value,
         location: state_id
       },
@@ -389,23 +452,40 @@ const saveProfile = async () => {
       }
     );
 
-    // capturar o ID da organização criada
     const organizationId = response_organization.data.id;
     console.log('Organização criada com ID:', organizationId);
 
     // Salvar o ID no store global
     organizationStore.setOrganizationId(organizationId);
 
-    // Fechar modal após sucesso
-    isProfileAddressModal.value = false;
-    alert('Profile saved successfully!');
-
   } catch (error) {
     console.error("Erro ao salvar:", error.response?.data);
     alert('Error saving profile. Check console for details.');
+    return null;
   }
 };
 
 const isProfileAddressModal = ref(false);
+
+// Mapeamento de IDs para strings
+const stateMapping = {
+  1: 'ES',
+  2: 'RJ',
+  3: 'SP'
+};
+
+const typeMapping = {
+  1: 'Software Factory',
+  2: 'Startup',
+  3: 'Private Company with an IT Department',
+  4: 'Single-product Software Company (e.g. Airbnb, Uber)'
+};
+
+const sizeMapping = {
+  1: '01 to 09 employees',
+  2: '10 to 49 employees',
+  3: '50 to 99 employees',
+  4: 'More than 99 employees'
+};
 
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="p-5 mb-6 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    <div v-if="showcard" class="p-5 mb-6 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 class="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -83,7 +83,7 @@
           </div>
         </div>
 
-        <button class="edit-button" @click="isProfileInfoModal = true">
+        <button class="edit-button" @click="isProfileInfoModal = true ">
           <svg
             class="fill-current"
             width="18"
@@ -322,12 +322,7 @@
                 Close
               </button>
 
-              <button
-                @click="voltar"
-                type="button"
-                class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto">
-              Back
-              </button>
+
               <button
                 @click="saveProfile"
                 type="button"
@@ -344,27 +339,34 @@
 </template>
 
 <script setup>
-import Modal from './Modal.vue'
-import { ref, onMounted, computed } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import Modal from './Modal.vue';
+import { ref, onMounted, computed, watch, defineProps, defineEmits } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import { useOrganizationStore } from '@/stores/organization';
-import axios from 'axios'
+import axios from 'axios';
 
 const props = defineProps({
   organizationName: String,
-})
+  showPersonalInfoCard: Boolean,
+  salvarorganização: {
+    type: Boolean,
+    default: false
+  }
+});
 
-const auth = useAuthStore()
+const emit = defineEmits(['update:salvarorganização']);
+
+const auth = useAuthStore();
 const organizationStore = useOrganizationStore();
-
-const selectAcademicDegree = ref('')
-const AcademicDegreeName = ref('')
-const selectAcademicDegreeStatus = ref('')
-const selectExperienceLevel = ref('')
-const selectPositionLevel = ref('')
-const role = ref('')
-const selectKnowledgeLevel = ref('')
-const selectEmployeeExperienceLevel = ref('')
+const showcard = ref(false);
+const selectAcademicDegree = ref('');
+const AcademicDegreeName = ref('');
+const selectAcademicDegreeStatus = ref('');
+const selectExperienceLevel = ref('');
+const selectPositionLevel = ref('');
+const role = ref('');
+const selectKnowledgeLevel = ref('');
+const selectEmployeeExperienceLevel = ref('');
 
 // Listas
 const academicDegrees = [
@@ -373,128 +375,117 @@ const academicDegrees = [
   "Bachelor's Degree",
   "Master's Degree",
   "Doctorate",
-]
+];
 
 const academicDegreeStatuses = [
   { label: "In Progress", value: 1 },
   { label: "Completed", value: 2 },
-] 
+];
 
-const experienceLevels = [
-  "Junior",
-  "Mid-level",
-  "Senior",
-]
-
+const experienceLevels = ["Junior", "Mid-level", "Senior"];
 const positionLevels = [
   "Project Manager",
   "Scrum Master",
   "Product Owner",
   "Developer",
   "Technical Lead",
-  "Director"
-]
+  "Director",
+];
+const knowledgeLevels = ["Beginner", "Intermediate", "Advanced"];
+const employeeExperienceLevels = ["Beginner", "Intermediate", "Advanced"];
 
-const knowledgeLevels = [
-  "Beginner",
-  "Intermediate",
-  "Advanced"
-]
-
-const employeeExperienceLevels = [
-  "Beginner",
-  "Intermediate",
-  "Advanced"
-]
-
-// Carregar usuário
-onMounted(async () => {
-  if (auth.token && !auth.user) {
-    try {
-      await auth.fetchUser()
-    } catch (error) {
-      console.error('Erro ao carregar usuário:', error)
+watch(
+  () => props.showPersonalInfoCard,
+  (newVal) => {
+    if (newVal) {
+      showcard.value = true;
+      isProfileInfoModal.value = true;
+    } else {
+      showcard.value = false;
+      isProfileInfoModal.value = false;
     }
   }
-})
+);
 
-const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
+watch(
+  () => props.salvarorganização,
+  (newVal) => {
+    if (newVal) {
+      saveProfile();
+    }
+  }
+);
 
-const isProfileInfoModal = ref(false)
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com');
+const isProfileInfoModal = ref(false);
 
 const saveProfile = async () => {
   try {
-    // Primeira requisição: Criar Employee
+    emit('update:salvarorganização', true);
+    
     const employeeResponse = await axios.post(
       'http://localhost:8000/employee/employee/',
       {
         e_mail: userEmail.value,
         role: role.value,
-        employee_position: selectPositionLevel.value, // Enviar apenas o ID
-        employee_organization: organizationStore.organizationId, // Usar o ID do store
+        employee_position: selectPositionLevel.value,
+        employee_organization: organizationStore.organizationId,
       },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       }
     );
     console.log('Perfil salvo com sucesso:', employeeResponse.data);
 
-    // Capturar o ID do Employee criado
     const employeeId = employeeResponse.data.id;
 
-    // Segunda requisição: Criar AcademicDegree
     const academicDegreeResponse = await axios.post(
       'http://localhost:8000/employee/academicdegree/',
       {
         degree_name: selectAcademicDegree.value,
-        degree_type: selectAcademicDegree.value, // Corrigir o nome do campo se necessário
+        degree_type: selectAcademicDegree.value,
       },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       }
     );
     console.log('Grau acadêmico salvo com sucesso:', academicDegreeResponse.data);
 
-    // Capturar o ID do AcademicDegree criado
     const academicDegreeId = academicDegreeResponse.data.id;
 
-    // Mapear o valor de selectAcademicDegreeStatus para o ID correspondente
     const academicDegreeStatusId = academicDegreeStatuses.find(
       (status) => status.label === selectAcademicDegreeStatus.value
     )?.value;
 
-    // Terceira requisição: Criar EmployeeKnowledge
     const employeeKnowledgeResponse = await axios.post(
       'http://localhost:8000/employee/employeeknowledge/',
       {
-        academic_degree: academicDegreeId, // Enviar apenas o ID
-        academic_degree_status: academicDegreeStatusId, // Enviar o ID correspondente
-        employee: employeeId // Enviar apenas o ID
+        academic_degree: academicDegreeId,
+        academic_degree_status: academicDegreeStatusId,
+        employee: employeeId,
       },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       }
     );
     console.log('Conhecimento do funcionário salvo com sucesso:', employeeKnowledgeResponse.data);
 
-    // Fechar o modal após salvar tudo
     isProfileInfoModal.value = false;
+    emit('update:salvarorganização', false);
   } catch (error) {
     console.error('Erro ao salvar perfil ou conhecimento:', error);
-
-    // Exibir mensagem de erro detalhada
     if (error.response) {
       console.error('Erro no backend:', error.response.data);
     } else {
       console.error('Erro na requisição:', error.message);
     }
+    emit('update:salvarorganização', false);
   }
 };
- 
 </script>
