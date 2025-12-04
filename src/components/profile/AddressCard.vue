@@ -17,7 +17,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">State</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectedState || organization.location }}
+                {{ selectedState || stateMapping[organization.location] }}
               </p>
             </div>
 
@@ -34,7 +34,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Type of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectType || organization.organization_type }}
+                {{ SelectType || typeMapping[organization.organization_type] }}
               </p>
             </div>
 
@@ -49,7 +49,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization size</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_size || organization.organization_size }}
+                {{ select_Bussines_size || sizeMapping[organization.organization_size] }}
               </p>
             </div>
 
@@ -63,9 +63,11 @@
           </div>
         </div>
 
+        <!-- Disable if organization.name exists -->
         <button
           @click="isProfileAddressModal = true"
-          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+          :disabled="!!organization.name"
+          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Edit
         </button>
@@ -368,7 +370,9 @@ const fetchEmployeeData = async () => {
           // Assign organization data to the reactive variable
           if (funcionario.employee_organization) {
             organization.value = funcionario.employee_organization;
-            console.log("Dados da organização atribuídos:", organization.value);
+            console.log("Dados da organização atribuídos:", organization.value);  
+            
+
           } else {
             console.log("Funcionário não possui organização associada.");
           }
@@ -462,5 +466,26 @@ const saveProfile = async () => {
 };
 
 const isProfileAddressModal = ref(false);
+
+// Mapeamento de IDs para strings
+const stateMapping = {
+  1: 'ES',
+  2: 'RJ',
+  3: 'SP'
+};
+
+const typeMapping = {
+  1: 'Software Factory',
+  2: 'Startup',
+  3: 'Private Company with an IT Department',
+  4: 'Single-product Software Company (e.g. Airbnb, Uber)'
+};
+
+const sizeMapping = {
+  1: '01 to 09 employees',
+  2: '10 to 49 employees',
+  3: '50 to 99 employees',
+  4: 'More than 99 employees'
+};
 
 </script>
