@@ -248,7 +248,8 @@ const props = defineProps({
   showPersonalInfoCard: {
     type: Boolean,
     default: false
-  }
+  },
+  salvarorganização:Boolean,
 });
 
 // Local state
@@ -278,6 +279,13 @@ const proximatela = () => {
 // Watch for prop changes
 watch(() => props.Bussines_name, (newVal) => {
   Bussines_name.value = newVal;
+});
+
+// Watch for changes in salvarorganização prop
+watch(() => props.salvarorganização, (newVal) => {
+  if (newVal) {
+    saveProfile();
+  }
 });
 
 // Select options

@@ -10,10 +10,12 @@
       <address-card 
         v-model:businessName="organizationName" 
         v-model:showPersonalInfoCard="personainfoshow"
+        v-model:salvarorganização="salvarorganização"
         />
       <personal-info-card 
         v-model:organizationName="organizationName" 
         v-model:showPersonalInfoCard="personainfoshow"
+        v-model:salvarorganização="salvarorganização"
         />
     </div>
   </admin-layout>
@@ -31,5 +33,6 @@ const currentPageTitle = ref('User Profile')
 //compartilhar nome da organização
 const organizationName = ref('') //constante pro nome da organização
 const personainfoshow = ref(false) //variável que to bizoaiando 
+const salvarorganização = ref(false)
  
 </script>
