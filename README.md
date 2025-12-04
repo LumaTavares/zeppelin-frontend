@@ -5,7 +5,7 @@ framework, and **Tailwind CSS**. This **powerful combination** provides develope
 essential components, elements, and pages to launch a comprehensive and data-centric back-end, dashboard, or admin panel
 solution for any Vue.js based web projects.
 
-![Zeppelin Solution Dashboard Preview](./banner.png)
+![Zeppelin Solution Dashboard Preview](./logo.png)
 
 With TailAdmin Vue, you can leverage **Vue.js 3** features such as declarative rendering, component-based architecture,
 Vue Router for routing, and Pinia for state management. It also utilizes the power of Tailwind CSS for rapid UI
