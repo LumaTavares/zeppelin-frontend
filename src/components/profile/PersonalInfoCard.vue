@@ -422,6 +422,7 @@ const isProfileInfoModal = ref(false);
 const saveProfile = async () => {
   try {
     emit('update:salvarorganização', true);
+    
     const employeeResponse = await axios.post(
       'http://localhost:8000/employee/employee/',
       {

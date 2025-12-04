@@ -10,14 +10,14 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Name</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ Bussines_name }}
+                {{ Bussines_name || organization.name }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">State</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectedState }}
+                {{ selectedState || organization.location }}
               </p>
             </div>
 
@@ -27,21 +27,21 @@
                 Founded year
               </p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ foundedYear }}
+                {{ foundedYear || organization.age }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Type of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectType }}
+                {{ SelectType || organization.organization_type }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Category of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_Category }}
+                {{ select_Bussines_Category || organization.description }}
               </p>
             </div>
 
@@ -49,14 +49,14 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization size</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_size }}
+                {{ select_Bussines_size || organization.organization_size }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Description</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ description }}
+                {{ description || organization.description }}
               </p>
             </div>
             
@@ -232,10 +232,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, defineProps, defineEmits } from 'vue';
+import { onMounted, ref, watch, computed, defineProps, defineEmits } from 'vue';
 import Modal from './Modal.vue';
 import axios from 'axios';
 import { useOrganizationStore } from '@/stores/organization';
+import { useAuthStore } from '@/stores/auth';
 import PersonalInfoCard from './PersonalInfoCard.vue';
 
 // Define props and emits
@@ -262,6 +263,10 @@ const select_Bussines_Category = ref('');
 const description = ref('');
 const showAddressCard = ref(true);
 const showPersonalInfoCard = ref(false);
+const organization = ref({}); // Reactive variable for organization data
+
+const auth = useAuthStore();
+const userEmail = computed(() => auth.user?.email);
 
 // Function to update and emit showPersonalInfoCard
 const updateShowPersonalInfoCard = (value) => {
@@ -335,6 +340,54 @@ const dict_category = {
   6: 'Manufacturing'
 }
 
+
+// Function to fetch employee data
+const fetchEmployeeData = async () => {
+  try {
+    const response_funcionario = await axios.get("http://localhost:8000/employee/employee/", {
+      headers: {
+        Authorization: `Bearer ${auth.token}`
+      },
+      params: {
+        limit: 100 // Adjust the limit as needed
+      }
+    });
+
+    // Access the `data` property inside the response object
+    const funcionarios = response_funcionario.data?.data;
+
+    console.log("Lista de funcionários:", funcionarios); // Log the entire array
+    console.log("userEmail:", userEmail.value); // Log the userEmail value
+
+    if (Array.isArray(funcionarios)) {
+      for (const funcionario of funcionarios) {
+        console.log("Verificando funcionário:", funcionario); // Log each funcionario object
+        if (funcionario?.e_mail === userEmail.value) {
+          console.log("Funcionário encontrado:", funcionario); // Log when a match is found
+
+          // Assign organization data to the reactive variable
+          if (funcionario.employee_organization) {
+            organization.value = funcionario.employee_organization;
+            console.log("Dados da organização atribuídos:", organization.value);
+          } else {
+            console.log("Funcionário não possui organização associada.");
+          }
+          break; 
+        }
+      }
+    } else {
+      console.error("Erro: response_funcionario.data.data não é um array:", funcionarios);
+    }
+  } catch (error) {
+    console.error("Erro ao buscar funcionário:", error.response || error.message || "Erro desconhecido");
+  }
+};
+
+onMounted(() => {
+  console.log('Component mounted. Fetching employee data...');
+  fetchEmployeeData();
+});
+
 const saveProfile = async () => {
   const token = localStorage.getItem("access_token");
   const organizationStore = useOrganizationStore();
@@ -374,7 +427,6 @@ const saveProfile = async () => {
       }
     );
 
-    // PEGA O ID RETORNADO (geralmente vem em response.data.id)
     const created_type_id = response_OrganizationType.data.id;
     console.log('Type criado com ID:', created_type_id);
 
@@ -385,7 +437,7 @@ const saveProfile = async () => {
         name: Bussines_name.value,
         description: description.value,
         organization_size: size_id,
-        organization_type: created_type_id,  // ← USA O ID RETORNADO AQUI
+        organization_type: created_type_id, 
         age: foundedYear.value,
         location: state_id
       },
@@ -396,20 +448,16 @@ const saveProfile = async () => {
       }
     );
 
-    // capturar o ID da organização criada
     const organizationId = response_organization.data.id;
     console.log('Organização criada com ID:', organizationId);
 
     // Salvar o ID no store global
     organizationStore.setOrganizationId(organizationId);
 
-    // Fechar modal após sucesso
-    isProfileAddressModal.value = false;
-    alert('Profile saved successfully!');
-
   } catch (error) {
     console.error("Erro ao salvar:", error.response?.data);
     alert('Error saving profile. Check console for details.');
+    return null;
   }
 };
 
