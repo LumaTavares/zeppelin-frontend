@@ -236,7 +236,7 @@
 <script setup>
 import { onMounted, ref, watch, computed, defineProps, defineEmits } from 'vue';
 import Modal from './Modal.vue';
-import axios from 'axios';
+import {api} from '@/services/api';
 import { useOrganizationStore } from '@/stores/organization';
 import { useAuthStore } from '@/stores/auth';
 import PersonalInfoCard from './PersonalInfoCard.vue';
@@ -346,7 +346,7 @@ const dict_category = {
 // Function to fetch employee data
 const fetchEmployeeData = async () => {
   try {
-    const response_funcionario = await axios.get("http://localhost:8000/employee/employee/", {
+    const response_funcionario = await api.get("/employee/employee/", {
       headers: {
         Authorization: `Bearer ${auth.token}`
       },
@@ -417,8 +417,8 @@ const saveProfile = async () => {
     );
 
     // PRIMEIRO: Cria o OrganizationType
-    const response_OrganizationType = await axios.post(
-      "http://localhost:8000/organization/organizationtype/",
+    const response_OrganizationType = await api.post(
+      "/organization/organizationtype/",
       {
         name: SelectType.value,
         description: description.value,
@@ -435,8 +435,8 @@ const saveProfile = async () => {
     console.log('Type criado com ID:', created_type_id);
 
     // SEGUNDO: Cria a Organization usando o ID do tipo criado
-    const response_organization = await axios.post(
-      "http://localhost:8000/organization/organization/",
+    const response_organization = await api.post(
+      "/organization/organization/",
       {
         name: Bussines_name.value,
         description: description.value,

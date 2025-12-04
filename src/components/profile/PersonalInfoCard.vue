@@ -343,7 +343,7 @@ import Modal from './Modal.vue';
 import { ref, onMounted, computed, watch, defineProps, defineEmits } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationStore } from '@/stores/organization';
-import axios from 'axios';
+import { api } from '@/services/api';
 
 const props = defineProps({
   organizationName: String,
@@ -423,8 +423,8 @@ const saveProfile = async () => {
   try {
     emit('update:salvarorganização', true);
     
-    const employeeResponse = await axios.post(
-      'http://localhost:8000/employee/employee/',
+    const employeeResponse = await api.post(
+      '/employee/employee/',
       {
         e_mail: userEmail.value,
         role: role.value,
@@ -441,8 +441,8 @@ const saveProfile = async () => {
 
     const employeeId = employeeResponse.data.id;
 
-    const academicDegreeResponse = await axios.post(
-      'http://localhost:8000/employee/academicdegree/',
+    const academicDegreeResponse = await api.post(
+      '/employee/academicdegree/',
       {
         degree_name: selectAcademicDegree.value,
         degree_type: selectAcademicDegree.value,
@@ -461,8 +461,8 @@ const saveProfile = async () => {
       (status) => status.label === selectAcademicDegreeStatus.value
     )?.value;
 
-    const employeeKnowledgeResponse = await axios.post(
-      'http://localhost:8000/employee/employeeknowledge/',
+    const employeeKnowledgeResponse = await api.post(
+      '/employee/employeeknowledge/',
       {
         academic_degree: academicDegreeId,
         academic_degree_status: academicDegreeStatusId,
