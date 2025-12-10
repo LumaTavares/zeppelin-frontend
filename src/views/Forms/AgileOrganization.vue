@@ -48,11 +48,26 @@ import QuestionItem from './QuestionItem.vue'
 
 import QUESTIONS from '@/data/agile_organization.json'
 import { useQuestionnaire } from '@/composables/useQuestionnaire'
-  
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
+import { fetchEmployeeData } from '@/stores/user'
+
 const pageTitle = 'Agile Organization'
 const { answers, left, right, dump } = useQuestionnaire(QUESTIONS as any)
 
-function submit() {
-  console.log('agile organization answers:', dump())
-}
+// State for dropdown options
+const adoptedLevels = ref([])
+const statements = ref([])
+
+// Fetch initial data from the backend
+onMounted(async () => {
+  try {
+    // Fetch employee and organization data
+    await fetchEmployeeData()
+    
+  } catch (error) {
+    console.error('Error fetching employee data:', error)
+  }
+})
+   
 </script>
