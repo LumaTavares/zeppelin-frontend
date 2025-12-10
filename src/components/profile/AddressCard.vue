@@ -239,10 +239,9 @@ import Modal from './Modal.vue';
 import axios from 'axios';
 import { useOrganizationStore } from '@/stores/organization';
 import { useAuthStore } from '@/stores/auth';
-import PersonalInfoCard from './PersonalInfoCard.vue';
 
 // Define props and emits
-const emit = defineEmits(['update:showPersonalInfoCard']);
+const emit = defineEmits(['update:showPersonalInfoCard', 'update:isProfileAddressModal']);
 const props = defineProps({
   Bussines_name: {
     type: String,
@@ -252,7 +251,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  salvarorganização:Boolean,
+  salvarorganização: Boolean,
+  isProfileAddressModal: Boolean,
 });
 
 // Local state
@@ -264,22 +264,24 @@ const select_Bussines_size = ref('');
 const select_Bussines_Category = ref('');
 const description = ref('');
 const showAddressCard = ref(true);
-const showPersonalInfoCard = ref(false);
 const organization = ref({}); // Reactive variable for organization data
 
 const auth = useAuthStore();
 const userEmail = computed(() => auth.user?.email);
 
+// Watch for changes in showPersonalInfoCard prop to hide/show AddressCard
+watch(() => props.showPersonalInfoCard, (newVal) => {
+  showAddressCard.value = !newVal;
+});
+
 // Function to update and emit showPersonalInfoCard
 const updateShowPersonalInfoCard = (value) => {
-  showPersonalInfoCard.value = value;
   emit('update:showPersonalInfoCard', value);
 };
 
-// Transition to PersonalInfoCard
 const proximatela = () => {
   showAddressCard.value = false;
-  isProfileAddressModal.value = false;
+  emit('update:isProfileAddressModal', false);
   updateShowPersonalInfoCard(true);
 };
 
@@ -311,28 +313,27 @@ const Bussines_size = [
   'More than 99 employees'
 ];
 
-// DICIONÁRIOS PARA MAPEAR VALORES PARA IDs - CORRIGIDO
+// Dictionaries for mapping values to IDs
 const dict_size = {
   1: '01 to 09 employees',
   2: '10 to 49 employees',
   3: '50 to 99 employees',
   4: 'More than 99 employees'
-}
+};
 
 const dict_type = {
   1: 'Software Factory',
   2: 'Startup',
   3: 'Private Company with an IT Department',
   4: 'Single-product Software Company (e.g. Airbnb, Uber)'
-}
+};
 
 const dict_estados = {
   1: 'ES',
   2: 'RJ',
   3: 'SP'
-}
+};
 
-//mudar isso depois NAO ESQUECEEEEEEEERRRRRRRRRRRR
 const dict_category = {
   1: 'Finance',
   2: 'Health',
@@ -340,13 +341,12 @@ const dict_category = {
   4: 'Technology',
   5: 'Retail',
   6: 'Manufacturing'
-}
-
+};
 
 // Function to fetch employee data
 const fetchEmployeeData = async () => {
   try {
-    const response_funcionario = await axios.get("http://localhost:8000/employee/employee/", {
+    const response_funcionario = await axios.get('http://localhost:8000/employee/employee/', {
       headers: {
         Authorization: `Bearer ${auth.token}`
       },
@@ -355,55 +355,39 @@ const fetchEmployeeData = async () => {
       }
     });
 
-    // Access the `data` property inside the response object
     const funcionarios = response_funcionario.data?.data;
-
-    console.log("Lista de funcionários:", funcionarios); // Log the entire array
-    console.log("userEmail:", userEmail.value); // Log the userEmail value
 
     if (Array.isArray(funcionarios)) {
       for (const funcionario of funcionarios) {
-        console.log("Verificando funcionário:", funcionario); // Log each funcionario object
         if (funcionario?.e_mail === userEmail.value) {
-          console.log("Funcionário encontrado:", funcionario); // Log when a match is found
-
-          // Assign organization data to the reactive variable
           if (funcionario.employee_organization) {
             organization.value = funcionario.employee_organization;
-            console.log("Dados da organização atribuídos:", organization.value);  
-            
-
-          } else {
-            console.log("Funcionário não possui organização associada.");
           }
-          break; 
+          break;
         }
       }
     } else {
-      console.error("Erro: response_funcionario.data.data não é um array:", funcionarios);
+      console.error('Error: response_funcionario.data.data is not an array:', funcionarios);
     }
   } catch (error) {
-    console.error("Erro ao buscar funcionário:", error.response || error.message || "Erro desconhecido");
+    console.error('Error fetching employee data:', error.response || error.message || 'Unknown error');
   }
 };
 
 onMounted(() => {
-  console.log('Component mounted. Fetching employee data...');
   fetchEmployeeData();
 });
 
 const saveProfile = async () => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem('access_token');
   const organizationStore = useOrganizationStore();
 
   try {
-    // Validação básica
     if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value || !select_Bussines_Category.value) {
       alert('Please fill all fields');
       return;
     }
 
-    // pega os IDs
     const size_id = Number(
       Object.keys(dict_size).find(key => dict_size[key] === select_Bussines_size.value)
     );
@@ -416,9 +400,8 @@ const saveProfile = async () => {
       Object.keys(dict_category).find(key => dict_category[key] === select_Bussines_Category.value)
     );
 
-    // PRIMEIRO: Cria o OrganizationType
     const response_OrganizationType = await axios.post(
-      "http://localhost:8000/organization/organizationtype/",
+      'http://localhost:8000/organization/organizationtype/',
       {
         name: SelectType.value,
         description: description.value,
@@ -432,16 +415,14 @@ const saveProfile = async () => {
     );
 
     const created_type_id = response_OrganizationType.data.id;
-    console.log('Type criado com ID:', created_type_id);
 
-    // SEGUNDO: Cria a Organization usando o ID do tipo criado
     const response_organization = await axios.post(
-      "http://localhost:8000/organization/organization/",
+      'http://localhost:8000/organization/organization/',
       {
         name: Bussines_name.value,
         description: description.value,
         organization_size: size_id,
-        organization_type: created_type_id, 
+        organization_type: created_type_id,
         age: foundedYear.value,
         location: state_id
       },
@@ -453,19 +434,17 @@ const saveProfile = async () => {
     );
 
     const organizationId = response_organization.data.id;
-    console.log('Organização criada com ID:', organizationId);
-
-    // Salvar o ID no store global
     organizationStore.setOrganizationId(organizationId);
-
   } catch (error) {
-    console.error("Erro ao salvar:", error.response?.data);
+    console.error('Error saving profile:', error.response?.data);
     alert('Error saving profile. Check console for details.');
-    return null;
   }
 };
 
-const isProfileAddressModal = ref(false);
+const isProfileAddressModal = computed({
+  get: () => props.isProfileAddressModal,
+  set: (value) => emit('update:isProfileAddressModal', value)
+});
 
 // Mapeamento de IDs para strings
 const stateMapping = {

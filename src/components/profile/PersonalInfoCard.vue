@@ -322,6 +322,14 @@
                 Close
               </button>
 
+              <button
+                @click="back"
+                type="button"
+                class="flex w-full justify-center rounded-lg bg-brand-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-900 sm:w-auto"
+              >
+                Back
+              </button>
+
 
               <button
                 @click="saveProfile"
@@ -351,10 +359,17 @@ const props = defineProps({
   salvarorganização: {
     type: Boolean,
     default: false
-  }
+  },
+  showAddressCard: Boolean,
+  isProfileAddressModal: Boolean,
 });
 
-const emit = defineEmits(['update:salvarorganização']);
+const emit = defineEmits([
+  'update:salvarorganização',
+  'update:showAddressCard',
+  'update:showPersonalInfoCard',
+  'update:isProfileAddressModal'
+]);
 
 const auth = useAuthStore();
 const organizationStore = useOrganizationStore();
@@ -394,6 +409,13 @@ const positionLevels = [
 const knowledgeLevels = ["Beginner", "Intermediate", "Advanced"];
 const employeeExperienceLevels = ["Beginner", "Intermediate", "Advanced"];
 
+const back = () => {
+  console.log('Back button clicked');
+  emit('update:showPersonalInfoCard', false);
+  emit('update:showAddressCard', true);
+  emit('update:isProfileAddressModal', true);
+};
+
 watch(
   () => props.showPersonalInfoCard,
   (newVal) => {
@@ -412,6 +434,16 @@ watch(
   (newVal) => {
     if (newVal) {
       saveProfile();
+    }
+  }
+);
+
+watch(
+  () => props.showAddressCard,
+  (newVal) => {
+    if (newVal) {
+      showcard.value = false;
+      isProfileInfoModal.value = false;
     }
   }
 );
