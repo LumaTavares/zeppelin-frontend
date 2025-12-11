@@ -352,9 +352,14 @@ watch(() => props.showPersonalInfoCard, (newVal) => {
   showAddressCard.value = !newVal
 });
 
+// Watch for changes in showPersonalInfoCard prop to hide/show AddressCard
+watch(() => props.showPersonalInfoCard, (newVal) => {
+  showAddressCard.value = !newVal;
+});
+
 // Function to update and emit showPersonalInfoCard
 const updateShowPersonalInfoCard = (value) => {
-  emit('update:showPersonalInfoCard', value)
+emit('update:showPersonalInfoCard', value)
 };
 
 const proximatela = async () => {
