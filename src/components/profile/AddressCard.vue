@@ -65,9 +65,8 @@
 
         <!-- Disable if organization.name exists -->
         <button
-          @click="isProfileAddressModal = true"
-          :disabled="!!organization.name"
-          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="openEditModal"
+          class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
         >
           Edit
         </button>
@@ -123,7 +122,7 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a state</option>
-                    <option v-for="estado in estados" :key="estado" :value="estado">
+                    <option v-for="estado in organizationStates" :key="estado" :value="estado">
                       {{ estado }}
                     </option>
                   </select>
@@ -153,7 +152,7 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a type</option>
-                    <option v-for="type in Type_Bussines" :key="type" :value="type">
+                    <option v-for="type in organizationTypes" :key="type" :value="type">
                       {{ type }}
                     </option>
                   </select>
@@ -168,7 +167,7 @@
                   class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                 >
                   <option value="" disabled>Category of organization</option>
-                  <option v-for="categoria in category" :key="categoria" :value="categoria">
+                  <option v-for="categoria in organizationCategories" :key="categoria" :value="categoria">
                     {{ categoria }}
                   </option>
                 </select>
@@ -185,7 +184,7 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a size</option>
-                    <option v-for="size in Bussines_size" :key="size" :value="size">
+                    <option v-for="size in organizationSizes" :key="size" :value="size">
                       {{ size }}
                     </option>
                   </select>
@@ -230,21 +229,44 @@
       </template>
     </Modal>
 
+    <ConfirmationModal
+      :show="showConfirmationModal"
+      title="Confirmar Edição"
+      message="Você tem certeza que deseja editar os dados da organização?"
+      @confirm="handleConfirmEdit"
+      @cancel="handleCancelEdit"
+    />
+
   </div>
 </template>
-
 <script setup>
-import { onMounted, ref, watch, computed, defineProps, defineEmits } from 'vue';
+import { ref, watch, computed } from 'vue';
 import Modal from './Modal.vue';
-import {api} from '@/services/api';
-import { useOrganizationStore } from '@/stores/organization';
+import ConfirmationModal from './ConfirmationModal.vue';
 import { useAuthStore } from '@/stores/auth';
-import PersonalInfoCard from './PersonalInfoCard.vue';
+import { useOrganizationProfile } from '@/composables/useOrganizationProfile';
+import { 
+  organizationCategories, 
+  organizationStates, 
+  organizationTypes, 
+  organizationSizes,
+  stateMapping, 
+  typeMapping, 
+  sizeMapping,
+  categoryMapping 
+} from '@/constants/profileOptions';
 
 // Define props and emits
-const emit = defineEmits(['update:showPersonalInfoCard']);
+const emit = defineEmits([
+  'update:businessName',
+  'update:showPersonalInfoCard',
+  'update:salvarorganização',
+  'update:showAddressCard',
+  'update:isProfileAddressModal'
+]);
+
 const props = defineProps({
-  Bussines_name: {
+  businessName: {
     type: String,
     default: ''
   },
@@ -252,240 +274,133 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  salvarorganização:Boolean,
+  salvarorganização: Boolean,
+  showAddressCard: {
+    type: Boolean,
+    default: true
+  },
+  isProfileAddressModal: {
+    type: Boolean,
+    default: false
+  }
 });
 
 // Local state
-const Bussines_name = ref('');
-const selectedState = ref('');
-const foundedYear = ref(null);
-const SelectType = ref('');
-const select_Bussines_size = ref('');
-const select_Bussines_Category = ref('');
-const description = ref('');
-const showAddressCard = ref(true);
-const showPersonalInfoCard = ref(false);
-const organization = ref({}); // Reactive variable for organization data
+const showConfirmationModal = ref(false);
+
+const isProfileAddressModal = computed({
+  get: () => props.isProfileAddressModal,
+  set: (val) => emit('update:isProfileAddressModal', val)
+});
+
+const showAddressCard = computed({
+  get: () => props.showAddressCard,
+  set: (val) => emit('update:showAddressCard', val)
+});
+
+const {
+  Bussines_name,
+  selectedState,
+  foundedYear,
+  SelectType,
+  select_Bussines_size,
+  select_Bussines_Category,
+  description,
+  organization,
+  fetchOrganizationData,
+  saveOrganization
+} = useOrganizationProfile()
+
+const openEditModal = () => {
+  if (organization.value && organization.value.id) {
+    showConfirmationModal.value = true
+  } else {
+    isProfileAddressModal.value = true
+  }
+};
+
+const handleConfirmEdit = () => {
+  showConfirmationModal.value = false
+  isProfileAddressModal.value = true
+};
+
+const handleCancelEdit = () => {
+  showConfirmationModal.value = false
+};
+
+// Reset form when modal opens
+watch(isProfileAddressModal, (newVal) => {
+  if (newVal && organization.value.id) {
+    Bussines_name.value = organization.value.name || ''
+    selectedState.value = stateMapping[organization.value.location] || ''
+    foundedYear.value = organization.value.age || null
+    select_Bussines_size.value = sizeMapping[organization.value.organization_size] || ''
+    description.value = organization.value.description || ''
+    
+    if (organization.value.organization_type_details) {
+       SelectType.value = organization.value.organization_type_details.name || ''
+    }
+  }
+});
 
 const auth = useAuthStore();
-const userEmail = computed(() => auth.user?.email);
+const userEmail = computed(() => auth.user?.email)
+
+// Watch for changes in showPersonalInfoCard prop to hide/show AddressCard
+watch(() => props.showPersonalInfoCard, (newVal) => {
+  showAddressCard.value = !newVal
+});
+
+// Watch for changes in showPersonalInfoCard prop to hide/show AddressCard
+watch(() => props.showPersonalInfoCard, (newVal) => {
+  showAddressCard.value = !newVal
+});
 
 // Function to update and emit showPersonalInfoCard
 const updateShowPersonalInfoCard = (value) => {
-  showPersonalInfoCard.value = value;
-  emit('update:showPersonalInfoCard', value);
+emit('update:showPersonalInfoCard', value)
 };
 
-// Transition to PersonalInfoCard
-const proximatela = () => {
-  showAddressCard.value = false;
-  isProfileAddressModal.value = false;
-  updateShowPersonalInfoCard(true);
+const proximatela = async () => {
+  try {
+    await saveOrganization()
+    if (organization.value && organization.value.id) {
+      showAddressCard.value = false
+      isProfileAddressModal.value = false
+      updateShowPersonalInfoCard(true)
+    }
+  } catch (error) {
+    console.error('Error saving organization:', error);
+    alert(error.message || 'Error saving profile')
+  }
 };
 
 // Watch for prop changes
-watch(() => props.Bussines_name, (newVal) => {
-  Bussines_name.value = newVal;
+watch(() => props.businessName, (newVal) => {
+  if (newVal) Bussines_name.value = newVal
+});
+
+watch(Bussines_name, (newVal) => {
+  emit('update:businessName', newVal)
 });
 
 // Watch for changes in salvarorganização prop
-watch(() => props.salvarorganização, (newVal) => {
+watch(() => props.salvarorganização, async (newVal) => {
   if (newVal) {
-    saveProfile();
+    try {
+      await saveOrganization();
+    } catch (error) {
+      console.error('Error saving organization:', error)
+    } finally {
+      emit('update:salvarorganização', false)
+    }
   }
 });
 
-// Select options
-const category = ['Finance', 'Health', 'Education', 'Technology', 'Retail', 'Manufacturing'];
-const estados = ['ES', 'RJ', 'SP'];
-const Type_Bussines = [
-  'Factory',
-  'Startup',
-  'Private Company with an IT Department',
-  'Single-product Software Company (e.g. Airbnb, Uber)'
-];
-const Bussines_size = [
-  '01 to 09 employees',
-  '10 to 49 employees',
-  '50 to 99 employees',
-  'More than 99 employees'
-];
-
-// DICIONÁRIOS PARA MAPEAR VALORES PARA IDs - CORRIGIDO
-const dict_size = {
-  1: '01 to 09 employees',
-  2: '10 to 49 employees',
-  3: '50 to 99 employees',
-  4: 'More than 99 employees'
-}
-
-const dict_type = {
-  1: 'Software Factory',
-  2: 'Startup',
-  3: 'Private Company with an IT Department',
-  4: 'Single-product Software Company (e.g. Airbnb, Uber)'
-}
-
-const dict_estados = {
-  1: 'ES',
-  2: 'RJ',
-  3: 'SP'
-}
-
-//mudar isso depois NAO ESQUECEEEEEEEERRRRRRRRRRRR
-const dict_category = {
-  1: 'Finance',
-  2: 'Health',
-  3: 'Education',
-  4: 'Technology',
-  5: 'Retail',
-  6: 'Manufacturing'
-}
-
-
-// Function to fetch employee data
-const fetchEmployeeData = async () => {
-  try {
-    const response_funcionario = await api.get("/employee/employee/", {
-      headers: {
-        Authorization: `Bearer ${auth.token}`
-      },
-      params: {
-        limit: 100 // Adjust the limit as needed
-      }
-    });
-
-    // Access the `data` property inside the response object
-    const funcionarios = response_funcionario.data?.data;
-
-    console.log("Lista de funcionários:", funcionarios); // Log the entire array
-    console.log("userEmail:", userEmail.value); // Log the userEmail value
-
-    if (Array.isArray(funcionarios)) {
-      for (const funcionario of funcionarios) {
-        console.log("Verificando funcionário:", funcionario); // Log each funcionario object
-        if (funcionario?.e_mail === userEmail.value) {
-          console.log("Funcionário encontrado:", funcionario); // Log when a match is found
-
-          // Assign organization data to the reactive variable
-          if (funcionario.employee_organization) {
-            organization.value = funcionario.employee_organization;
-            console.log("Dados da organização atribuídos:", organization.value);  
-            
-
-          } else {
-            console.log("Funcionário não possui organização associada.");
-          }
-          break; 
-        }
-      }
-    } else {
-      console.error("Erro: response_funcionario.data.data não é um array:", funcionarios);
-    }
-  } catch (error) {
-    console.error("Erro ao buscar funcionário:", error.response || error.message || "Erro desconhecido");
+watch(userEmail, (newEmail) => {
+  if (newEmail) {
+    fetchOrganizationData(newEmail)
   }
-};
-
-onMounted(() => {
-  console.log('Component mounted. Fetching employee data...');
-  fetchEmployeeData();
-});
-
-const saveProfile = async () => {
-  const token = localStorage.getItem("access_token");
-  const organizationStore = useOrganizationStore();
-
-  try {
-    // Validação básica
-    if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value || !select_Bussines_Category.value) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    // pega os IDs
-    const size_id = Number(
-      Object.keys(dict_size).find(key => dict_size[key] === select_Bussines_size.value)
-    );
-
-    const state_id = Number(
-      Object.keys(dict_estados).find(key => dict_estados[key] === selectedState.value)
-    );
-
-    const category_id = Number(
-      Object.keys(dict_category).find(key => dict_category[key] === select_Bussines_Category.value)
-    );
-
-    // PRIMEIRO: Cria o OrganizationType
-    const response_OrganizationType = await api.post(
-      "/organization/organizationtype/",
-      {
-        name: SelectType.value,
-        description: description.value,
-        category_organization_type: category_id
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    const created_type_id = response_OrganizationType.data.id;
-    console.log('Type criado com ID:', created_type_id);
-
-    // SEGUNDO: Cria a Organization usando o ID do tipo criado
-    const response_organization = await api.post(
-      "/organization/organization/",
-      {
-        name: Bussines_name.value,
-        description: description.value,
-        organization_size: size_id,
-        organization_type: created_type_id, 
-        age: foundedYear.value,
-        location: state_id
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    const organizationId = response_organization.data.id;
-    console.log('Organização criada com ID:', organizationId);
-
-    // Salvar o ID no store global
-    organizationStore.setOrganizationId(organizationId);
-
-  } catch (error) {
-    console.error("Erro ao salvar:", error.response?.data);
-    alert('Error saving profile. Check console for details.');
-    return null;
-  }
-};
-
-const isProfileAddressModal = ref(false);
-
-// Mapeamento de IDs para strings
-const stateMapping = {
-  1: 'ES',
-  2: 'RJ',
-  3: 'SP'
-};
-
-const typeMapping = {
-  1: 'Software Factory',
-  2: 'Startup',
-  3: 'Private Company with an IT Department',
-  4: 'Single-product Software Company (e.g. Airbnb, Uber)'
-};
-
-const sizeMapping = {
-  1: '01 to 09 employees',
-  2: '10 to 49 employees',
-  3: '50 to 99 employees',
-  4: 'More than 99 employees'
-};
+}, { immediate: true })
 
 </script>

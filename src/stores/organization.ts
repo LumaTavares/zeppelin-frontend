@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 
 export const useOrganizationStore = defineStore('organization', {
   state: () => ({
-    organizationId: null, // ID da organização
+    organizationId: null as number | null, // ID da organização
   }),
   actions: {
-    setOrganizationId(id) {
+    setOrganizationId(id: number) {
       this.organizationId = id;
     },
   },

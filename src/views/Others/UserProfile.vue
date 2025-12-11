@@ -11,11 +11,15 @@
         v-model:businessName="organizationName" 
         v-model:showPersonalInfoCard="personainfoshow"
         v-model:salvarorganização="salvarorganização"
+        v-model:showAddressCard="showAddressCard"
+        v-model:isProfileAddressModal="isProfileAddressModal"
         />
       <personal-info-card 
         v-model:organizationName="organizationName" 
         v-model:showPersonalInfoCard="personainfoshow"
         v-model:salvarorganização="salvarorganização"
+        v-model:showAddressCard="showAddressCard"
+        v-model:isProfileAddressModal="isProfileAddressModal"
         />
     </div>
   </admin-layout>
@@ -34,5 +38,7 @@ const currentPageTitle = ref('User Profile')
 const organizationName = ref('') //constante pro nome da organização
 const personainfoshow = ref(false) //variável que to bizoaiando 
 const salvarorganização = ref(false)
+const showAddressCard = ref(true)
+const isProfileAddressModal = ref(false)
  
 </script>
