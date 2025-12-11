@@ -52,10 +52,10 @@ const props = defineProps({
 const emit = defineEmits(['confirm', 'cancel']);
 
 const onConfirm = () => {
-  emit('confirm');
+  emit('confirm')
 };
 
 const onCancel = () => {
-  emit('cancel');
+  emit('cancel')
 };
 </script>

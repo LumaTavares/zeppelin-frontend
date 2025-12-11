@@ -358,7 +358,7 @@ import {
   experienceLevels, 
   knowledgeLevels, 
   employeeExperienceLevels 
-} from '@/constants/profileOptions';
+} from '@/constants/profileOptions'
 
 const props = defineProps({
   organizationName: String,
@@ -378,12 +378,12 @@ const emit = defineEmits([
   'update:isProfileAddressModal'
 ]);
 
-const auth = useAuthStore();
-const organizationStore = useOrganizationStore();
-const showcard = ref(false);
-const isProfileInfoModal = ref(false);
+const auth = useAuthStore()
+const organizationStore = useOrganizationStore()
+const showcard = ref(false)
+const isProfileInfoModal = ref(false)
 
-const userEmail = computed(() => auth.user?.email || 'email@exemplo.com');
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
 const {
   selectAcademicDegree,
@@ -397,25 +397,25 @@ const {
   positionLevels,
   fetchEmployeeData,
   saveProfile: saveProfileService
-} = useEmployeeProfile();
+} = useEmployeeProfile()
 
 
 const back = () => {
   console.log('Back button clicked');
-  emit('update:showPersonalInfoCard', false);
-  emit('update:showAddressCard', true);
-  emit('update:isProfileAddressModal', true);
+  emit('update:showPersonalInfoCard', false)
+  emit('update:showAddressCard', true)
+  emit('update:isProfileAddressModal', true)
 };
 
 watch(
   () => props.showPersonalInfoCard,
   (newVal) => {
     if (newVal) {
-      showcard.value = true;
-      isProfileInfoModal.value = true;
+      showcard.value = true
+      isProfileInfoModal.value = true
     } else {
-      showcard.value = false;
-      isProfileInfoModal.value = false;
+      showcard.value = false
+      isProfileInfoModal.value = false
     }
   }
 );
@@ -424,7 +424,7 @@ watch(
   () => props.salvarorganização,
   (newVal) => {
     if (newVal) {
-      handleSaveProfile();
+      handleSaveProfile()
     }
   }
 );
@@ -441,19 +441,19 @@ watch(
 
 watch(userEmail, (newEmail) => {
   if (newEmail) {
-    fetchEmployeeData(newEmail);
+    fetchEmployeeData(newEmail)
   }
-}, { immediate: true });
+}, { immediate: true })
 
 const handleSaveProfile = async () => {
   try {
-    emit('update:salvarorganização', true);
+    emit('update:salvarorganização', true)
     await saveProfileService(userEmail.value, organizationStore.organizationId);
-    isProfileInfoModal.value = false;
-    emit('update:salvarorganização', false);
+    isProfileInfoModal.value = false
+    emit('update:salvarorganização', false)
   } catch (error) {
-    console.error('Erro ao salvar perfil:', error);
-    emit('update:salvarorganização', false);
+    console.error('Erro ao salvar perfil:', error)
+    emit('update:salvarorganização', false)
   }
 };
 </script>

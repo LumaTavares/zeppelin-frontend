@@ -229,7 +229,6 @@
       </template>
     </Modal>
 
-    <!-- MODAL DE CONFIRMAÇÃO -->
     <ConfirmationModal
       :show="showConfirmationModal"
       title="Confirmar Edição"
@@ -310,33 +309,33 @@ const {
   organization,
   fetchOrganizationData,
   saveOrganization
-} = useOrganizationProfile();
+} = useOrganizationProfile()
 
 const openEditModal = () => {
   if (organization.value && organization.value.id) {
-    showConfirmationModal.value = true;
+    showConfirmationModal.value = true
   } else {
-    isProfileAddressModal.value = true;
+    isProfileAddressModal.value = true
   }
 };
 
 const handleConfirmEdit = () => {
-  showConfirmationModal.value = false;
-  isProfileAddressModal.value = true;
+  showConfirmationModal.value = false
+  isProfileAddressModal.value = true
 };
 
 const handleCancelEdit = () => {
-  showConfirmationModal.value = false;
+  showConfirmationModal.value = false
 };
 
 // Reset form when modal opens
 watch(isProfileAddressModal, (newVal) => {
   if (newVal && organization.value.id) {
-    Bussines_name.value = organization.value.name || '';
+    Bussines_name.value = organization.value.name || ''
     selectedState.value = stateMapping[organization.value.location] || ''
     foundedYear.value = organization.value.age || null
     select_Bussines_size.value = sizeMapping[organization.value.organization_size] || ''
-    description.value = organization.value.description || '';
+    description.value = organization.value.description || ''
     
     if (organization.value.organization_type_details) {
        SelectType.value = organization.value.organization_type_details.name || ''
@@ -354,7 +353,7 @@ watch(() => props.showPersonalInfoCard, (newVal) => {
 
 // Watch for changes in showPersonalInfoCard prop to hide/show AddressCard
 watch(() => props.showPersonalInfoCard, (newVal) => {
-  showAddressCard.value = !newVal;
+  showAddressCard.value = !newVal
 });
 
 // Function to update and emit showPersonalInfoCard
@@ -364,7 +363,7 @@ emit('update:showPersonalInfoCard', value)
 
 const proximatela = async () => {
   try {
-    await saveOrganization();
+    await saveOrganization()
     if (organization.value && organization.value.id) {
       showAddressCard.value = false
       isProfileAddressModal.value = false
@@ -382,7 +381,7 @@ watch(() => props.businessName, (newVal) => {
 });
 
 watch(Bussines_name, (newVal) => {
-  emit('update:businessName', newVal);
+  emit('update:businessName', newVal)
 });
 
 // Watch for changes in salvarorganização prop
@@ -391,9 +390,9 @@ watch(() => props.salvarorganização, async (newVal) => {
     try {
       await saveOrganization();
     } catch (error) {
-      console.error('Error saving organization:', error);
+      console.error('Error saving organization:', error)
     } finally {
-      emit('update:salvarorganização', false);
+      emit('update:salvarorganização', false)
     }
   }
 });
