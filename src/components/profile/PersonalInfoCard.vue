@@ -40,7 +40,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree Status</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectAcademicDegreeStatus }}
+                {{ selectAcademicDegreeStatus }}
               </p>
             </div>
 
@@ -54,7 +54,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Position Level</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectPositionLevel }}
+                {{ selectPositionLevel }}
               </p>
             </div>
 
@@ -68,14 +68,14 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Knowledge Level</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectKnwoledge_level }}
+                {{ selectKnowledgeLevel }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Employee Experience Level</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectEmployee_experience_level }}
+                {{ selectEmployeeExperienceLevel }}
               </p>
             </div>
 
@@ -246,7 +246,7 @@
                       Position Level
                     </label>
                     <select
-                      v-model="SelectPositionLevel"
+                      v-model="selectPositionLevel"
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
@@ -278,7 +278,7 @@
                       Knowledge Level
                     </label>
                     <select
-                      v-model="SelectKnwoledge_level"
+                      v-model="selectKnowledgeLevel"
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
@@ -298,7 +298,7 @@
                       Employee Experience Level
                     </label>
                     <select
-                      v-model="SelectEmployee_experience_level"
+                      v-model="selectEmployeeExperienceLevel"
                       class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                       <option
@@ -322,9 +322,17 @@
                 Close
               </button>
 
+              <button
+                @click="back"
+                type="button"
+                class="flex w-full justify-center rounded-lg bg-brand-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-900 sm:w-auto"
+              >
+                Back
+              </button>
+
 
               <button
-                @click="saveProfile"
+                @click="handleSaveProfile"
                 type="button"
                 class="flex w-full justify-center rounded-lg bg-brand-950 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-900 sm:w-auto"
               >
@@ -340,10 +348,17 @@
 
 <script setup>
 import Modal from './Modal.vue';
-import { ref, onMounted, computed, watch, defineProps, defineEmits } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationStore } from '@/stores/organization';
-import { api } from '@/services/api';
+import { useEmployeeProfile } from '@/composables/useEmployeeProfile';
+import { 
+  academicDegrees, 
+  academicDegreeStatuses, 
+  experienceLevels, 
+  knowledgeLevels, 
+  employeeExperienceLevels 
+} from '@/constants/profileOptions';
 
 const props = defineProps({
   organizationName: String,
@@ -351,48 +366,45 @@ const props = defineProps({
   salvarorganização: {
     type: Boolean,
     default: false
-  }
+  },
+  showAddressCard: Boolean,
+  isProfileAddressModal: Boolean,
 });
 
-const emit = defineEmits(['update:salvarorganização']);
+const emit = defineEmits([
+  'update:salvarorganização',
+  'update:showAddressCard',
+  'update:showPersonalInfoCard',
+  'update:isProfileAddressModal'
+]);
 
 const auth = useAuthStore();
 const organizationStore = useOrganizationStore();
 const showcard = ref(false);
-const selectAcademicDegree = ref('');
-const AcademicDegreeName = ref('');
-const selectAcademicDegreeStatus = ref('');
-const selectExperienceLevel = ref('');
-const selectPositionLevel = ref('');
-const role = ref('');
-const selectKnowledgeLevel = ref('');
-const selectEmployeeExperienceLevel = ref('');
+const isProfileInfoModal = ref(false);
 
-// Listas
-const academicDegrees = [
-  "Secondary Education",
-  "Undergraduate",
-  "Bachelor's Degree",
-  "Master's Degree",
-  "Doctorate",
-];
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com');
 
-const academicDegreeStatuses = [
-  { label: "In Progress", value: 1 },
-  { label: "Completed", value: 2 },
-];
+const {
+  selectAcademicDegree,
+  AcademicDegreeName,
+  selectAcademicDegreeStatus,
+  selectExperienceLevel,
+  selectPositionLevel,
+  role,
+  selectKnowledgeLevel,
+  selectEmployeeExperienceLevel,
+  positionLevels,
+  fetchEmployeeData,
+  saveProfile: saveProfileService
+} = useEmployeeProfile();
 
-const experienceLevels = ["Junior", "Mid-level", "Senior"];
-const positionLevels = [
-  "Project Manager",
-  "Scrum Master",
-  "Product Owner",
-  "Developer",
-  "Technical Lead",
-  "Director",
-];
-const knowledgeLevels = ["Beginner", "Intermediate", "Advanced"];
-const employeeExperienceLevels = ["Beginner", "Intermediate", "Advanced"];
+const back = () => {
+  console.log('Back button clicked');
+  emit('update:showPersonalInfoCard', false);
+  emit('update:showAddressCard', true);
+  emit('update:isProfileAddressModal', true);
+};
 
 watch(
   () => props.showPersonalInfoCard,
@@ -411,80 +423,35 @@ watch(
   () => props.salvarorganização,
   (newVal) => {
     if (newVal) {
-      saveProfile();
+      handleSaveProfile();
     }
   }
 );
 
-const userEmail = computed(() => auth.user?.email || 'email@exemplo.com');
-const isProfileInfoModal = ref(false);
+watch(
+  () => props.showAddressCard,
+  (newVal) => {
+    if (newVal) {
+      showcard.value = false;
+      isProfileInfoModal.value = false;
+    }
+  }
+);
 
-const saveProfile = async () => {
+watch(userEmail, (newEmail) => {
+  if (newEmail) {
+    fetchEmployeeData(newEmail);
+  }
+}, { immediate: true });
+
+const handleSaveProfile = async () => {
   try {
     emit('update:salvarorganização', true);
-    
-    const employeeResponse = await api.post(
-      '/employee/employee/',
-      {
-        e_mail: userEmail.value,
-        role: role.value,
-        employee_position: selectPositionLevel.value,
-        employee_organization: organizationStore.organizationId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-    console.log('Perfil salvo com sucesso:', employeeResponse.data);
-
-    const employeeId = employeeResponse.data.id;
-
-    const academicDegreeResponse = await api.post(
-      '/employee/academicdegree/',
-      {
-        degree_name: selectAcademicDegree.value,
-        degree_type: selectAcademicDegree.value,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-    console.log('Grau acadêmico salvo com sucesso:', academicDegreeResponse.data);
-
-    const academicDegreeId = academicDegreeResponse.data.id;
-
-    const academicDegreeStatusId = academicDegreeStatuses.find(
-      (status) => status.label === selectAcademicDegreeStatus.value
-    )?.value;
-
-    const employeeKnowledgeResponse = await api.post(
-      '/employee/employeeknowledge/',
-      {
-        academic_degree: academicDegreeId,
-        academic_degree_status: academicDegreeStatusId,
-        employee: employeeId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-    console.log('Conhecimento do funcionário salvo com sucesso:', employeeKnowledgeResponse.data);
-
+    await saveProfileService(userEmail.value, organizationStore.organizationId);
     isProfileInfoModal.value = false;
     emit('update:salvarorganização', false);
   } catch (error) {
-    console.error('Erro ao salvar perfil ou conhecimento:', error);
-    if (error.response) {
-      console.error('Erro no backend:', error.response.data);
-    } else {
-      console.error('Erro na requisição:', error.message);
-    }
+    console.error('Erro ao salvar perfil:', error);
     emit('update:salvarorganização', false);
   }
 };

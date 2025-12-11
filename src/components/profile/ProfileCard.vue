@@ -24,35 +24,35 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-// pegar store
-const auth = useAuthStore()
+// Store instance
+const auth = useAuthStore();
 
-// email do usuário (reativo)
-const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
+// Reactive user email
+const userEmail = computed(() => auth.user?.email || 'email@exemplo.com');
 
-// expor para o template
-const email = userEmail
+// Expose email to template
+const email = userEmail;
 
-// carregar usuário ao montar
+// Load user on mount
 onMounted(async () => {
   if (auth.token && !auth.user) {
     try {
-      await auth.fetchUser()
+      await auth.fetchUser();
     } catch (error) {
-      console.error('Erro ao carregar usuário:', error)
+      console.error('Error loading user:', error);
     }
   }
-})
+});
 
-// modal
-const isProfileInfoModal = ref(false)
+// Modal state
+const isProfileInfoModal = ref(false);
 
-// salvar "mock"
+// Save profile mock function
 const saveProfile = () => {
-  console.log("Profile saved")
-  isProfileInfoModal.value = false
-}
+  console.log('Profile saved');
+  isProfileInfoModal.value = false;
+};
 </script>
