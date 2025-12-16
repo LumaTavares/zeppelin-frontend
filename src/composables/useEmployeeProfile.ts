@@ -1,59 +1,29 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { 
-  academicDegreeStatuses
+  academicDegreeStatuses,
+  academicDegrees,
+  academicDegreeMapping,
+  idToAcademicDegreeMapping,
+  idToPositionMapping,
+  positionLevels as positionLevelsConst,
+  positionMapping as positionMappingConst,
 } from '@/constants/profileOptions'
 
 export function useEmployeeProfile() {
   const selectAcademicDegree = ref('')
-  const AcademicDegreeName = ref('')
   const selectAcademicDegreeStatus = ref('')
-  const selectExperienceLevel = ref('')
   const selectPositionLevel = ref('')
   const role = ref('')
-  const selectKnowledgeLevel = ref('')
-  const selectEmployeeExperienceLevel = ref('')
   const employeeId = ref(null)
   const knowledgeId = ref(null)
 
-  const positionLevels = ref<string[]>([]);
-  const positionMapping = ref<Record<string, number>>({})
-  const idToPositionMapping = ref<Record<number, string>>({})
-
-  const fetchPositions = async () => {
-    const token = localStorage.getItem('access_token')
-    try {
-      const response = await axios.get('http://localhost:8000/employee/position/', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const positions = response.data?.results || response.data?.data || response.data || [];
-      
-      positionLevels.value = []
-      positionMapping.value = {}
-      idToPositionMapping.value = {}
-
-      positions.forEach((pos: any) => {
-        if (pos.name && pos.id) {
-          positionLevels.value.push(pos.name)
-          positionMapping.value[pos.name] = pos.id;
-          idToPositionMapping.value[pos.id] = pos.name;
-        }
-      });
-      console.log('Positions fetched:', positionMapping.value)
-    } catch (error) {
-      console.error('Error fetching positions:', error)
-    }
-  };
+  // Use static position levels from constants
+  const positionLevels = positionLevelsConst;
 
   const fetchEmployeeData = async (userEmail: string) => {
     const token = localStorage.getItem('access_token')
     if (!token || !userEmail) return
-
-    // Ensure positions are loaded
-    if (positionLevels.value.length === 0) {
-        await fetchPositions()
-    }
 
     // Reset IDs
     employeeId.value = null
@@ -99,9 +69,13 @@ export function useEmployeeProfile() {
       if (employee) {
         employeeId.value = employee.id
         role.value = employee.role || ''
-        // Map ID to English label for display
+        // Map ID to English label for display using imported mapping
         if (employee.employee_position) {
-            selectPositionLevel.value = idToPositionMapping.value[employee.employee_position] || ''
+            const positionIdValue = typeof employee.employee_position === 'object' 
+                ? employee.employee_position.id 
+                : employee.employee_position;
+            selectPositionLevel.value = idToPositionMapping[positionIdValue as keyof typeof idToPositionMapping] || ''
+            console.log(`Position ID ${positionIdValue} mapped to: ${selectPositionLevel.value}`);
         }
         
         // Fetch Employee Knowledge to populate Academic Degree and Status
@@ -154,35 +128,32 @@ export function useEmployeeProfile() {
                     }
                 }
 
-                // Populate Academic Degree
+                // Populate Academic Degree - CORRIGIDO
                 let degreeId = null
-                if (knowledgeEntry.academic_degree && typeof knowledgeEntry.academic_degree === 'object') {
-                    degreeId = knowledgeEntry.academic_degree.id
-                    // Check for 'degree_name' OR 'name'
-                    const dName = knowledgeEntry.academic_degree.degree_name || knowledgeEntry.academic_degree.name;
-                    if (dName) {
-                         selectAcademicDegree.value = dName
-                         AcademicDegreeName.value = dName
+                let degreeName = null
+                
+                if (knowledgeEntry.academic_degree) {
+                    if (typeof knowledgeEntry.academic_degree === 'object') {
+                        degreeId = knowledgeEntry.academic_degree.id
+                        // Tenta pegar o nome de diferentes campos possíveis
+                        degreeName = knowledgeEntry.academic_degree.degree_name 
+                                  || knowledgeEntry.academic_degree.name 
+                                  || knowledgeEntry.academic_degree.label
+                    } else {
+                        degreeId = knowledgeEntry.academic_degree
                     }
-                } else {
-                    degreeId = knowledgeEntry.academic_degree
-                }
-
-                if (degreeId && !selectAcademicDegree.value) {
-                    try {
-                        const degreeResponse = await axios.get(`http://localhost:8000/employee/academicdegree/${degreeId}/`, {
-                            headers: { Authorization: `Bearer ${token}` }
-                        });
-                        if (degreeResponse.data) {
-                            // Check for degree_name or name in the response
-                            const fetchedName = degreeResponse.data.degree_name || degreeResponse.data.name
-                            if (fetchedName) {
-                                selectAcademicDegree.value = fetchedName
-                                AcademicDegreeName.value = fetchedName
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Error fetching degree details", e)
+                    
+                    // Se temos o nome direto, usa
+                    if (degreeName && academicDegrees.includes(degreeName)) {
+                        selectAcademicDegree.value = degreeName
+                        console.log(`Academic Degree name found: ${degreeName}`);
+                    } 
+                    // Senão, tenta mapear pelo ID
+                    else if (degreeId && idToAcademicDegreeMapping[degreeId]) {
+                        selectAcademicDegree.value = idToAcademicDegreeMapping[degreeId]
+                        console.log(`Academic Degree ID ${degreeId} mapped to: ${selectAcademicDegree.value}`);
+                    } else {
+                        console.warn(`Could not map academic degree. ID: ${degreeId}, Name: ${degreeName}`);
                     }
                 }
             } else {
@@ -197,101 +168,107 @@ export function useEmployeeProfile() {
     }
   };
 
-  const saveProfile = async (userEmail: string, organizationId: number | string) => {
+  const saveProfile = async (userEmail: string, organizationId: number | string, shouldSaveOrganization: boolean = true) => {
     const token = localStorage.getItem('access_token')
     const headers = {
       Authorization: `Bearer ${token}`,
     };
     
-    let employeeResponse;
-    const payload = {
-      e_mail: userEmail,
-      role: role.value,
-      employee_position: positionMapping.value[selectPositionLevel.value],
-      employee_organization: organizationId,
-    };
-
-    console.log('Payload being sent:', payload);
-    console.log('Saving profile. Employee ID:', employeeId.value)
-
     try {
+      // Step 1: Save or update Employee
+      let employeeResponse;
+      let positionId = null;
+      
+      if (selectPositionLevel.value) {
+        positionId = positionMappingConst[selectPositionLevel.value as keyof typeof positionMappingConst];
+        console.log(`Position: "${selectPositionLevel.value}" -> ID: ${positionId}`);
+      }
+      
+      const employeePayload = {
+        e_mail: userEmail,
+        role: role.value,
+        employee_position: positionId,
+        employee_organization: shouldSaveOrganization ? organizationId : undefined,
+      };
+
+      console.log('Saving Employee with payload:', employeePayload);
+
       if (employeeId.value) {
         employeeResponse = await axios.patch(
           `http://localhost:8000/employee/employee/${employeeId.value}/`,
-          payload,
+          employeePayload,
           { headers }
         );
+        console.log('Employee updated:', employeeResponse.data);
       } else {
         employeeResponse = await axios.post(
           'http://localhost:8000/employee/employee/',
-          payload,
+          employeePayload,
           { headers }
         );
+        console.log('Employee created:', employeeResponse.data);
       }
-    } catch (error: any) {
-      console.error('Error saving employee:', error.response?.data)
-      throw error;
-    }
-    console.log('Perfil salvo com sucesso:', employeeResponse.data)
 
-    employeeId.value = employeeResponse.data.id
+      employeeId.value = employeeResponse.data.id;
 
-    const academicDegreeResponse = await axios.post(
-      'http://localhost:8000/employee/academicdegree/',
-      {
-        degree_name: selectAcademicDegree.value,
-        degree_type: selectAcademicDegree.value,
-      },
-      { headers }
-    );
-    console.log('Grau acadêmico salvo com sucesso:', academicDegreeResponse.data);
+      // Step 2: Save or update EmployeeKnowledge
+      let academicDegreeId = null;
+      if (selectAcademicDegree.value) {
+        academicDegreeId = academicDegreeMapping[selectAcademicDegree.value];
+        console.log(`Academic Degree: "${selectAcademicDegree.value}" -> ID: ${academicDegreeId}`);
+      }
+      
+      const academicDegreeStatusId = academicDegreeStatuses.find(s => s.label === selectAcademicDegreeStatus.value)?.value;
+      console.log(`Academic Degree Status: "${selectAcademicDegreeStatus.value}" -> ID: ${academicDegreeStatusId}`);
 
-    const academicDegreeId = academicDegreeResponse.data.id;
-
-    const academicDegreeStatusId = academicDegreeStatuses.find(
-      (status) => status.label === selectAcademicDegreeStatus.value
-    )?.value;
-
-    let employeeKnowledgeResponse;
-    const knowledgePayload = {
+      const knowledgePayload = {
         academic_degree: academicDegreeId,
         academic_degree_status: academicDegreeStatusId,
         employee: employeeId.value,
-    };
+      };
 
-    if (knowledgeId.value) {
+      console.log('Saving EmployeeKnowledge with payload:', knowledgePayload);
+
+      let employeeKnowledgeResponse;
+      if (knowledgeId.value) {
         employeeKnowledgeResponse = await axios.patch(
-            `http://localhost:8000/employee/employeeknowledge/${knowledgeId.value}/`,
-            knowledgePayload,
-            { headers }
+          `http://localhost:8000/employee/employeeknowledge/${knowledgeId.value}/`,
+          knowledgePayload,
+          { headers }
         );
-    } else {
+        console.log('EmployeeKnowledge updated:', employeeKnowledgeResponse.data);
+      } else {
         employeeKnowledgeResponse = await axios.post(
-            'http://localhost:8000/employee/employeeknowledge/',
-            knowledgePayload,
-            { headers }
+          'http://localhost:8000/employee/employeeknowledge/',
+          knowledgePayload,
+          { headers }
         );
+        console.log('EmployeeKnowledge created:', employeeKnowledgeResponse.data);
+      }
+
+      if (employeeKnowledgeResponse.data && employeeKnowledgeResponse.data.id) {
+        knowledgeId.value = employeeKnowledgeResponse.data.id;
+      }
+      
+      console.log('Profile saved successfully!');
+      return employeeResponse.data;
+      
+    } catch (error: any) {
+      console.error('Error saving profile:', error.response?.data || error.message);
+      throw error;
     }
-    console.log('Conhecimento do funcionário salvo com sucesso:', employeeKnowledgeResponse.data);
-    if (employeeKnowledgeResponse.data && employeeKnowledgeResponse.data.id) {
-        knowledgeId.value = employeeKnowledgeResponse.data.id
-    }
-    
-    return employeeResponse.data
   };
 
   return {
     selectAcademicDegree,
-    AcademicDegreeName,
     selectAcademicDegreeStatus,
-    selectExperienceLevel,
     selectPositionLevel,
     role,
-    selectKnowledgeLevel,
-    selectEmployeeExperienceLevel,
     employeeId,
     knowledgeId,
     positionLevels,
+    academicDegrees,
+    academicDegreeStatuses,
     fetchEmployeeData,
     saveProfile
   };
