@@ -39,14 +39,6 @@
             </div>
 
             <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Category of organization</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_Category || organization.description }}
-              </p>
-            </div>
-
-
-            <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization size</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
                 {{ select_Bussines_size || sizeMapping[organization.organization_size] }}
@@ -158,21 +150,6 @@
                   </select>
                 </div>
 
-                <div>
-                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Category of organization
-                </label>
-                <select 
-                  v-model="select_Bussines_Category"   
-                  class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
-                >
-                  <option value="" disabled>Category of organization</option>
-                  <option v-for="categoria in organizationCategories" :key="categoria" :value="categoria">
-                    {{ categoria }}
-                  </option>
-                </select>
-              </div>
-
                 <!-- SELECT Organization Size -->
                 <div>
                   <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
@@ -246,14 +223,12 @@ import ConfirmationModal from './ConfirmationModal.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationProfile } from '@/composables/useOrganizationProfile';
 import { 
-  organizationCategories, 
   organizationStates, 
   organizationTypes, 
   organizationSizes,
   stateMapping, 
   typeMapping, 
-  sizeMapping,
-  categoryMapping 
+  sizeMapping
 } from '@/constants/profileOptions';
 
 // Define props and emits
@@ -304,7 +279,6 @@ const {
   foundedYear,
   SelectType,
   select_Bussines_size,
-  select_Bussines_Category,
   description,
   organization,
   fetchOrganizationData,

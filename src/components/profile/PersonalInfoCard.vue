@@ -33,24 +33,10 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree Status</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ AcademicDegreeName }}
-              </p>
-            </div>
-
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Academic Degree Status</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
                 {{ selectAcademicDegreeStatus }}
               </p>
             </div>
 
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Experience Level</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectExperienceLevel }}
-              </p>
-            </div> 
-            
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Position Level</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
@@ -62,20 +48,6 @@
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Role</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
                 {{ role }}
-              </p>
-            </div>
-
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Knowledge Level</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectKnowledgeLevel }}
-              </p>
-            </div>
-
-            <div>
-              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Employee Experience Level</p>
-              <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectEmployeeExperienceLevel }}
               </p>
             </div>
 
@@ -163,19 +135,6 @@
                     />
                   </div>
 
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Degree name 
-                    </label>
-                    <input
-                      type="text"
-                      v-model="AcademicDegreeName"
-                      class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    />
-                  </div>
-
                   <div class="col-span-2 lg:col-span-1">
                     <label
                       class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
@@ -194,7 +153,6 @@
                         {{ degree }}
                       </option>
                     </select>
-                
                   </div>
 
                   <div class="col-span-2">
@@ -216,27 +174,6 @@
                       </option>
                     </select>
                     
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Experience Level
-                    </label>
-                    <select
-                      v-model="selectExperienceLevel"
-                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    >
-                      <option
-                        v-for="level in experienceLevels"
-                        :key="level"
-                        :value="level"
-                      >
-                        {{ level }}
-                      </option>
-                    </select>
-
                   </div>
 
                   <div>
@@ -269,46 +206,6 @@
                       v-model="role"
                       class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     />
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Knowledge Level
-                    </label>
-                    <select
-                      v-model="selectKnowledgeLevel"
-                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    >
-                      <option
-                        v-for="knowledge in knowledgeLevels"
-                        :key="knowledge"
-                        :value="knowledge"
-                      >
-                        {{ knowledge }}
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                      Employee Experience Level
-                    </label>
-                    <select
-                      v-model="selectEmployeeExperienceLevel"
-                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    >
-                      <option
-                        v-for="experience in employeeExperienceLevels"
-                        :key="experience"
-                        :value="experience"
-                      >
-                        {{ experience }}
-                      </option>
-                    </select>
                   </div>
                 </div>
               </div>
@@ -352,13 +249,6 @@ import { ref, computed, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationStore } from '@/stores/organization';
 import { useEmployeeProfile } from '@/composables/useEmployeeProfile';
-import { 
-  academicDegrees, 
-  academicDegreeStatuses, 
-  experienceLevels, 
-  knowledgeLevels, 
-  employeeExperienceLevels 
-} from '@/constants/profileOptions'
 
 const props = defineProps({
   organizationName: String,
@@ -387,18 +277,15 @@ const userEmail = computed(() => auth.user?.email || 'email@exemplo.com')
 
 const {
   selectAcademicDegree,
-  AcademicDegreeName,
   selectAcademicDegreeStatus,
-  selectExperienceLevel,
   selectPositionLevel,
   role,
-  selectKnowledgeLevel,
-  selectEmployeeExperienceLevel,
   positionLevels,
+  academicDegrees,
+  academicDegreeStatuses,
   fetchEmployeeData,
   saveProfile: saveProfileService
 } = useEmployeeProfile()
-
 
 const back = () => {
   console.log('Back button clicked');
@@ -413,6 +300,11 @@ watch(
     if (newVal) {
       showcard.value = true
       isProfileInfoModal.value = true
+      // Recarregar dados quando o modal abrir
+      if (userEmail.value && userEmail.value !== 'email@exemplo.com') {
+        console.log('Fetching employee data for:', userEmail.value);
+        fetchEmployeeData(userEmail.value)
+      }
     } else {
       showcard.value = false
       isProfileInfoModal.value = false
@@ -440,20 +332,28 @@ watch(
 );
 
 watch(userEmail, (newEmail) => {
-  if (newEmail) {
+  if (newEmail && newEmail !== 'email@exemplo.com' && isProfileInfoModal.value) {
+    console.log('User email changed:', newEmail);
     fetchEmployeeData(newEmail)
   }
-}, { immediate: true })
+}, { immediate: false })
 
 const handleSaveProfile = async () => {
   try {
-    emit('update:salvarorganização', true)
-    await saveProfileService(userEmail.value, organizationStore.organizationId);
+    console.log('Saving profile with values:', {
+      selectAcademicDegree: selectAcademicDegree.value,
+      selectAcademicDegreeStatus: selectAcademicDegreeStatus.value,
+      selectPositionLevel: selectPositionLevel.value,
+      role: role.value
+    });
+    // NÃO salva organização aqui, apenas dados pessoais
+    await saveProfileService(userEmail.value, organizationStore.organizationId, false);
     isProfileInfoModal.value = false
-    emit('update:salvarorganização', false)
+    emit('update:showPersonalInfoCard', false)
+    emit('update:showAddressCard', true)
+    emit('update:isProfileAddressModal', true)
   } catch (error) {
     console.error('Erro ao salvar perfil:', error)
-    emit('update:salvarorganização', false)
   }
 };
 </script>

@@ -1,11 +1,10 @@
 import { ref } from 'vue';
-import axios from 'axios';
+import { api } from '@/services/api'
 import { useOrganizationStore } from '@/stores/organization'
 import { 
   stateMapping, 
   typeMapping, 
-  sizeMapping, 
-  categoryMapping 
+  sizeMapping
 } from '@/constants/profileOptions'
 
 export function useOrganizationProfile() {
@@ -14,7 +13,6 @@ export function useOrganizationProfile() {
   const foundedYear = ref<number | null>(null)
   const SelectType = ref('')
   const select_Bussines_size = ref('')
-  const select_Bussines_Category = ref('')
   const description = ref('')
   const organization = ref<any>({})
 
@@ -28,7 +26,7 @@ export function useOrganizationProfile() {
       let totalPages = 1
 
       // Initial request
-      const initialResponse = await axios.get('http://localhost:8000/employee/employee/', {
+      const initialResponse = await api.get('/employee/employee/', {
         headers: { Authorization: `Bearer ${token}` },
         params: { page: currentPage }
       });
@@ -45,7 +43,7 @@ export function useOrganizationProfile() {
 
       // Fetch remaining pages
       for (currentPage = 2; currentPage <= totalPages; currentPage++) {
-        const response = await axios.get('http://localhost:8000/employee/employee/', {
+        const response = await api.get('/employee/employee/', {
           headers: { Authorization: `Bearer ${token}` },
           params: { page: currentPage }
         });
@@ -68,8 +66,9 @@ export function useOrganizationProfile() {
         select_Bussines_size.value = sizeMapping[organization.value.organization_size] || ''
         description.value = organization.value.description || ''
         
-        if (organization.value.organization_type_details) {
-           SelectType.value = organization.value.organization_type_details.name || ''
+        // Map organization_type ID to name
+        if (organization.value.organization_type) {
+          SelectType.value = typeMapping[organization.value.organization_type] || ''
         }
       }
     } catch (error) {
@@ -81,65 +80,37 @@ export function useOrganizationProfile() {
     const token = localStorage.getItem('access_token')
     const organizationStore = useOrganizationStore()
 
-    if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value || !select_Bussines_Category.value) {
-      throw new Error('Please fill all fields')
+    if (!Bussines_name.value || !selectedState.value || !foundedYear.value || !SelectType.value || !select_Bussines_size.value) {
+      console.warn('Organization form incomplete. Not saving.')
+      return
     }
 
     // Reverse mapping to find IDs
     const size_id = Number(Object.keys(sizeMapping).find(key => sizeMapping[Number(key)] === select_Bussines_size.value));
     const state_id = Number(Object.keys(stateMapping).find(key => stateMapping[Number(key)] === selectedState.value));
-    const category_id = Number(Object.keys(categoryMapping).find(key => categoryMapping[Number(key)] === select_Bussines_Category.value));
-
-    // Logic for OrganizationType
-    let created_type_id
-
-    try {
-      const searchResponse = await axios.get('http://localhost:8000/organization/organizationtype/', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { name: SelectType.value }
-      });
-
-      const existingType = searchResponse.data.find((type: any) => type.name === SelectType.value)
-
-      if (existingType) {
-        created_type_id = existingType.id
-      }
-    } catch (error) {
-        console.log('Could not find existing organization type, will create a new one.');
-    }
-
-    if (!created_type_id) {
-        const response_OrganizationType = await axios.post(
-          'http://localhost:8000/organization/organizationtype/',
-          {
-            name: SelectType.value,
-            description: description.value,
-            category_organization_type: category_id
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        created_type_id = response_OrganizationType.data.id
-    }
+    const type_id = Number(Object.keys(typeMapping).find(key => typeMapping[Number(key)] === SelectType.value));
 
     const organizationPayload = {
       name: Bussines_name.value,
       description: description.value,
       organization_size: size_id,
-      organization_type: created_type_id,
+      organization_type: type_id,
       age: foundedYear.value,
       location: state_id
     };
 
+    console.log('Saving organization with payload:', organizationPayload);
+
     let response_organization;
     if (organization.value && organization.value.id) {
-      response_organization = await axios.patch(
-        `http://localhost:8000/organization/organization/${organization.value.id}/`,
+      response_organization = await api.patch(
+        `/organization/organization/${organization.value.id}/`,
         organizationPayload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } else {
-      response_organization = await axios.post(
-        'http://localhost:8000/organization/organization/',
+      response_organization = await api.post(
+        '/organization/organization/',
         organizationPayload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -159,7 +130,6 @@ export function useOrganizationProfile() {
     foundedYear,
     SelectType,
     select_Bussines_size,
-    select_Bussines_Category,
     description,
     organization,
     fetchOrganizationData,

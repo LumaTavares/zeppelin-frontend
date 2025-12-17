@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from '@/services/api'
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationStore } from '@/stores/organization';
@@ -13,7 +13,7 @@ export const fetchEmployeeData = async () => {
 
     console.log("userEmail:", userEmail.value); // Loga o valor de userEmail
 
-    const response_funcionario = await axios.get("http://localhost:8000/employee/employee/", {
+    const response_funcionario = await api.get("/employee/employee/", {
       headers: {
         Authorization: `Bearer ${auth.token}`
       },
