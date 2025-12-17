@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import axios from 'axios';
+import { api } from '@/services/api'
 import { useOrganizationStore } from '@/stores/organization'
 import { 
   stateMapping, 
@@ -26,7 +26,7 @@ export function useOrganizationProfile() {
       let totalPages = 1
 
       // Initial request
-      const initialResponse = await axios.get('http://localhost:8000/employee/employee/', {
+      const initialResponse = await api.get('/employee/employee/', {
         headers: { Authorization: `Bearer ${token}` },
         params: { page: currentPage }
       });
@@ -43,7 +43,7 @@ export function useOrganizationProfile() {
 
       // Fetch remaining pages
       for (currentPage = 2; currentPage <= totalPages; currentPage++) {
-        const response = await axios.get('http://localhost:8000/employee/employee/', {
+        const response = await api.get('/employee/employee/', {
           headers: { Authorization: `Bearer ${token}` },
           params: { page: currentPage }
         });
@@ -103,14 +103,14 @@ export function useOrganizationProfile() {
 
     let response_organization;
     if (organization.value && organization.value.id) {
-      response_organization = await axios.patch(
-        `http://localhost:8000/organization/organization/${organization.value.id}/`,
+      response_organization = await api.patch(
+        `/organization/organization/${organization.value.id}/`,
         organizationPayload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } else {
-      response_organization = await axios.post(
-        'http://localhost:8000/organization/organization/',
+      response_organization = await api.post(
+        '/organization/organization/',
         organizationPayload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
