@@ -1,11 +1,7 @@
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { api } from '@/services/api'
 import { useOrganizationStore } from '@/stores/organization'
-import { 
-  stateMapping, 
-  typeMapping, 
-  sizeMapping
-} from '@/constants/profileOptions'
+import { useProfileOptions } from '@/composables/useProfileOptions'
 
 export function useOrganizationProfile() {
   const Bussines_name = ref('')
@@ -15,6 +11,14 @@ export function useOrganizationProfile() {
   const select_Bussines_size = ref('')
   const description = ref('')
   const organization = ref<any>({})
+
+  // Load dynamic options from backend
+  const { states, organizationTypes, sizeMapping, loadAll } = useProfileOptions()
+
+  // Load options on mount
+  onMounted(async () => {
+    await loadAll()
+  })
 
   const fetchOrganizationData = async (userEmail: string) => {
     const token = localStorage.getItem('access_token');
@@ -59,17 +63,13 @@ export function useOrganizationProfile() {
       if (employee && employee.employee_organization) {
         organization.value = employee.employee_organization
         
-        // Populate form fields
+        // Populate form fields with IDs (not names)
         Bussines_name.value = organization.value.name || ''
-        selectedState.value = stateMapping[organization.value.location] || ''
+        selectedState.value = organization.value.location || ''
         foundedYear.value = organization.value.age || null
-        select_Bussines_size.value = sizeMapping[organization.value.organization_size] || ''
         description.value = organization.value.description || ''
-        
-        // Map organization_type ID to name
-        if (organization.value.organization_type) {
-          SelectType.value = typeMapping[organization.value.organization_type] || ''
-        }
+        SelectType.value = organization.value.organization_type || ''
+        select_Bussines_size.value = organization.value.organization_size || ''
       }
     } catch (error) {
       console.error('Error fetching organization data:', error)
@@ -85,18 +85,14 @@ export function useOrganizationProfile() {
       return
     }
 
-    // Reverse mapping to find IDs
-    const size_id = Number(Object.keys(sizeMapping).find(key => sizeMapping[Number(key)] === select_Bussines_size.value));
-    const state_id = Number(Object.keys(stateMapping).find(key => stateMapping[Number(key)] === selectedState.value));
-    const type_id = Number(Object.keys(typeMapping).find(key => typeMapping[Number(key)] === SelectType.value));
-
+    // Use IDs directly from form (selectedState and SelectType are already IDs)
     const organizationPayload = {
       name: Bussines_name.value,
       description: description.value,
-      organization_size: size_id,
-      organization_type: type_id,
+      organization_size: select_Bussines_size.value,
+      organization_type: SelectType.value,
       age: foundedYear.value,
-      location: state_id
+      location: selectedState.value
     };
 
     console.log('Saving organization with payload:', organizationPayload);

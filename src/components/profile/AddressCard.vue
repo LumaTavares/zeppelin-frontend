@@ -17,7 +17,7 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">State</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ selectedState || stateMapping[organization.location] }}
+                {{ stateMapping[selectedState] || (organization.location ? stateMapping[organization.location] : '') }}
               </p>
             </div>
 
@@ -34,14 +34,14 @@
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Type of organization</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ SelectType || typeMapping[organization.organization_type] }}
+                {{ typeMapping[SelectType] || (organization.organization_type ? typeMapping[organization.organization_type] : '') }}
               </p>
             </div>
 
             <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Organization size</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">
-                {{ select_Bussines_size || sizeMapping[organization.organization_size] }}
+                {{ sizeMapping[select_Bussines_size] || (organization.organization_size ? sizeMapping[organization.organization_size] : '') }}
               </p>
             </div>
 
@@ -114,8 +114,8 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a state</option>
-                    <option v-for="estado in organizationStates" :key="estado" :value="estado">
-                      {{ estado }}
+                    <option v-for="estado in organizationStates" :key="estado.id" :value="estado.id">
+                      {{ estado.name }}
                     </option>
                   </select>
                 </div>
@@ -144,8 +144,8 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a type</option>
-                    <option v-for="type in organizationTypes" :key="type" :value="type">
-                      {{ type }}
+                    <option v-for="type in organizationTypesList" :key="type.id" :value="type.id">
+                      {{ type.name }}
                     </option>
                   </select>
                 </div>
@@ -161,8 +161,8 @@
                     class="h-11 w-full rounded-lg border border-gray-300 px-3 text-sm"
                   >
                     <option value="" disabled>Select a size</option>
-                    <option v-for="size in organizationSizes" :key="size" :value="size">
-                      {{ size }}
+                    <option v-for="size in organizationSizes" :key="size.id" :value="size.id">
+                      {{ size.name }}
                     </option>
                   </select>
                 </div>
@@ -216,20 +216,13 @@
 
   </div>
 </template>
-<script setup>
-import { ref, watch, computed } from 'vue';
+<script setup lang="ts">
+import { ref, watch, computed, onMounted } from 'vue';
 import Modal from './Modal.vue';
 import ConfirmationModal from './ConfirmationModal.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useOrganizationProfile } from '@/composables/useOrganizationProfile';
-import { 
-  organizationStates, 
-  organizationTypes, 
-  organizationSizes,
-  stateMapping, 
-  typeMapping, 
-  sizeMapping
-} from '@/constants/profileOptions';
+import { useProfileOptions } from '@/composables/useProfileOptions';
 
 // Define props and emits
 const emit = defineEmits([
@@ -285,6 +278,36 @@ const {
   saveOrganization
 } = useOrganizationProfile()
 
+// Load dynamic options
+const { states, organizationTypes, organizationSizes, sizeMapping, loadAll } = useProfileOptions()
+
+// Computed properties for selectable values
+const organizationStates = computed(() => states.value.map(s => ({ id: s.id, name: s.name })))
+const organizationTypesList = computed(() => organizationTypes.value.map(t => ({ id: t.id, name: t.name })))
+
+// Computed mappings: id -> name
+const stateMapping = computed(() => {
+  const mapping: Record<string, string> = {}
+  states.value.forEach((state: any) => {
+    mapping[state.id] = state.name
+  })
+  return mapping
+})
+
+const typeMapping = computed(() => {
+  const mapping: Record<string, string> = {}
+  organizationTypes.value.forEach((type: any) => {
+    mapping[type.id] = type.name
+  })
+  return mapping
+})
+
+
+// Load options on mount
+onMounted(async () => {
+  await loadAll()
+})
+
 const openEditModal = () => {
   if (organization.value && organization.value.id) {
     showConfirmationModal.value = true
@@ -306,13 +329,13 @@ const handleCancelEdit = () => {
 watch(isProfileAddressModal, (newVal) => {
   if (newVal && organization.value.id) {
     Bussines_name.value = organization.value.name || ''
-    selectedState.value = stateMapping[organization.value.location] || ''
+    selectedState.value = organization.value.location || ''
     foundedYear.value = organization.value.age || null
-    select_Bussines_size.value = sizeMapping[organization.value.organization_size] || ''
+    select_Bussines_size.value = organization.value.organization_size || ''
     description.value = organization.value.description || ''
     
-    if (organization.value.organization_type_details) {
-       SelectType.value = organization.value.organization_type_details.name || ''
+    if (organization.value.organization_type) {
+       SelectType.value = organization.value.organization_type || ''
     }
   }
 });
@@ -331,7 +354,7 @@ watch(() => props.showPersonalInfoCard, (newVal) => {
 });
 
 // Function to update and emit showPersonalInfoCard
-const updateShowPersonalInfoCard = (value) => {
+const updateShowPersonalInfoCard = (value: boolean) => {
 emit('update:showPersonalInfoCard', value)
 };
 
@@ -345,7 +368,8 @@ const proximatela = async () => {
     }
   } catch (error) {
     console.error('Error saving organization:', error);
-    alert(error.message || 'Error saving profile')
+    const errorMessage = error instanceof Error ? error.message : 'Error saving profile'
+    alert(errorMessage)
   }
 };
 

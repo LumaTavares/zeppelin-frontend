@@ -1,25 +1,27 @@
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-import { 
-  academicDegreeStatuses,
-  academicDegrees,
-  academicDegreeMapping,
-  idToAcademicDegreeMapping,
-  idToPositionMapping,
-  positionLevels as positionLevelsConst,
-  positionMapping as positionMappingConst,
-} from '@/constants/profileOptions'
+import { useProfileOptions } from '@/composables/useProfileOptions'
 
 export function useEmployeeProfile() {
-  const selectAcademicDegree = ref('')
-  const selectAcademicDegreeStatus = ref('')
+  const selectAcademicDegree = ref<string | number>('')
+  const selectAcademicDegreeStatus = ref<string | number>('')
   const selectPositionLevel = ref('')
   const role = ref('')
   const employeeId = ref(null)
   const knowledgeId = ref(null)
 
-  // Use static position levels from constants
-  const positionLevels = positionLevelsConst;
+  // Load dynamic options from backend
+  const { academicDegrees: academicDegreesData, academicDegreeStatuses: statusesData, positions: positionsData, loadAll } = useProfileOptions()
+
+  // Create computed property for position levels from dynamic data
+  const positionLevels = computed(() => 
+    positionsData.value.map((p: any) => p.name)
+  )
+
+  // Load options on mount
+  onMounted(async () => {
+    await loadAll()
+  })
 
   const fetchEmployeeData = async (userEmail: string) => {
     const token = localStorage.getItem('access_token')
@@ -69,13 +71,18 @@ export function useEmployeeProfile() {
       if (employee) {
         employeeId.value = employee.id
         role.value = employee.role || ''
-        // Map ID to English label for display using imported mapping
-        if (employee.employee_position) {
+        // Map ID to position name from dynamic data
+        if (employee.employee_position && positionsData.value.length > 0) {
             const positionIdValue = typeof employee.employee_position === 'object' 
                 ? employee.employee_position.id 
                 : employee.employee_position;
-            selectPositionLevel.value = idToPositionMapping[positionIdValue as keyof typeof idToPositionMapping] || ''
-            console.log(`Position ID ${positionIdValue} mapped to: ${selectPositionLevel.value}`);
+            const foundPosition = positionsData.value.find((p: any) => p.id === positionIdValue)
+            if (foundPosition) {
+                selectPositionLevel.value = foundPosition.name
+                console.log(`Position ID ${positionIdValue} mapped to: ${foundPosition.name}`);
+            } else {
+                console.warn(`Position ID ${positionIdValue} not found`);
+            }
         }
         
         // Fetch Employee Knowledge to populate Academic Degree and Status
@@ -109,49 +116,42 @@ export function useEmployeeProfile() {
                 
                 // Handle case where status is an object (e.g. {id: 1, name: 'In Progress'})
                 if (statusVal && typeof statusVal === 'object') {
-                    // Try to match by ID first
+                    // Assign the ID directly
                     if (statusVal.id) {
-                        const statusObj = academicDegreeStatuses.find(s => s.value == statusVal.id)
-                        if (statusObj) {
-                            selectAcademicDegreeStatus.value = statusObj.label
-                        }
+                        selectAcademicDegreeStatus.value = statusVal.id
                     }
-                    // If not matched by ID, try name/label directly
-                    if (!selectAcademicDegreeStatus.value && statusVal.name) {
-                         selectAcademicDegreeStatus.value = statusVal.name
-                    }
-                } else {
-                    // Handle primitive value (ID)
-                    const statusObj = academicDegreeStatuses.find(s => s.value == statusVal);
-                    if (statusObj) {
-                        selectAcademicDegreeStatus.value = statusObj.label
-                    }
+                } else if (statusVal) {
+                    // Handle primitive value (ID) - assign directly
+                    selectAcademicDegreeStatus.value = statusVal
                 }
 
                 // Populate Academic Degree - CORRIGIDO
-                let degreeId = null
-                let degreeName = null
+                let degreeId: number | null = null
+                let degreeName: string | null = null
                 
                 if (knowledgeEntry.academic_degree) {
                     if (typeof knowledgeEntry.academic_degree === 'object') {
                         degreeId = knowledgeEntry.academic_degree.id
-                        // Tenta pegar o nome de diferentes campos possíveis
-                        degreeName = knowledgeEntry.academic_degree.degree_name 
-                                  || knowledgeEntry.academic_degree.name 
-                                  || knowledgeEntry.academic_degree.label
+                        degreeName = knowledgeEntry.academic_degree.name 
                     } else {
                         degreeId = knowledgeEntry.academic_degree
                     }
                     
-                    // Se temos o nome direto, usa
-                    if (degreeName && academicDegrees.includes(degreeName)) {
-                        selectAcademicDegree.value = degreeName
-                        console.log(`Academic Degree name found: ${degreeName}`);
-                    } 
-                    // Senão, tenta mapear pelo ID
-                    else if (degreeId && idToAcademicDegreeMapping[degreeId]) {
-                        selectAcademicDegree.value = idToAcademicDegreeMapping[degreeId]
-                        console.log(`Academic Degree ID ${degreeId} mapped to: ${selectAcademicDegree.value}`);
+                    // Procura no array dinâmico de academicDegrees
+                    if (degreeName && academicDegreesData.value.length > 0) {
+                        const foundDegree = academicDegreesData.value.find((d: any) => d.name === degreeName)
+                        if (foundDegree) {
+                            selectAcademicDegree.value = foundDegree.id
+                            console.log(`Academic Degree name found: ${degreeName} (ID: ${foundDegree.id})`);
+                        }
+                    }
+                    // Senão, procura pelo ID no array dinâmico
+                    else if (degreeId && academicDegreesData.value.length > 0) {
+                        const foundDegree = academicDegreesData.value.find((d: any) => d.id === degreeId)
+                        if (foundDegree) {
+                            selectAcademicDegree.value = foundDegree.id
+                            console.log(`Academic Degree ID ${degreeId} mapped to: ${foundDegree.name}`);
+                        }
                     } else {
                         console.warn(`Could not map academic degree. ID: ${degreeId}, Name: ${degreeName}`);
                     }
@@ -179,8 +179,9 @@ export function useEmployeeProfile() {
       let employeeResponse;
       let positionId = null;
       
-      if (selectPositionLevel.value) {
-        positionId = positionMappingConst[selectPositionLevel.value as keyof typeof positionMappingConst];
+      if (selectPositionLevel.value && positionsData.value.length > 0) {
+        const foundPosition = positionsData.value.find((p: any) => p.name === selectPositionLevel.value)
+        positionId = foundPosition?.id
         console.log(`Position: "${selectPositionLevel.value}" -> ID: ${positionId}`);
       }
       
@@ -214,12 +215,17 @@ export function useEmployeeProfile() {
       // Step 2: Save or update EmployeeKnowledge
       let academicDegreeId = null;
       if (selectAcademicDegree.value) {
-        academicDegreeId = academicDegreeMapping[selectAcademicDegree.value];
-        console.log(`Academic Degree: "${selectAcademicDegree.value}" -> ID: ${academicDegreeId}`);
+        // selectAcademicDegree.value is already an ID
+        academicDegreeId = selectAcademicDegree.value
+        console.log(`Academic Degree ID: ${academicDegreeId}`);
       }
       
-      const academicDegreeStatusId = academicDegreeStatuses.find(s => s.label === selectAcademicDegreeStatus.value)?.value;
-      console.log(`Academic Degree Status: "${selectAcademicDegreeStatus.value}" -> ID: ${academicDegreeStatusId}`);
+      let academicDegreeStatusId = null;
+      if (selectAcademicDegreeStatus.value) {
+        // selectAcademicDegreeStatus.value is already an ID
+        academicDegreeStatusId = selectAcademicDegreeStatus.value
+        console.log(`Academic Degree Status ID: ${academicDegreeStatusId}`);
+      }
 
       const knowledgePayload = {
         academic_degree: academicDegreeId,
@@ -267,8 +273,9 @@ export function useEmployeeProfile() {
     employeeId,
     knowledgeId,
     positionLevels,
-    academicDegrees,
-    academicDegreeStatuses,
+    academicDegrees: academicDegreesData,
+    academicDegreeStatuses: statusesData,
+    positions: positionsData,
     fetchEmployeeData,
     saveProfile
   };
